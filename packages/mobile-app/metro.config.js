@@ -1,6 +1,7 @@
-// Metro configuration for use inside an npm-workspaces monorepo.
-// https://docs.expo.dev/guides/monorepos/
+// Metro configuration for use inside an npm-workspaces monorepo, wrapped with
+// NativeWind. https://docs.expo.dev/guides/monorepos/ + https://www.nativewind.dev/
 const { getDefaultConfig } = require("expo/metro-config");
+const { withNativeWind } = require("nativewind/metro");
 const path = require("node:path");
 
 const projectRoot = __dirname;
@@ -18,4 +19,4 @@ config.resolver.nodeModulesPaths = [
   path.resolve(monorepoRoot, "node_modules"),
 ];
 
-module.exports = config;
+module.exports = withNativeWind(config, { input: "./global.css" });

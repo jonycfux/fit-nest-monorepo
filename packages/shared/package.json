@@ -1,5 +1,5 @@
 {
-  "name": "@fitnest/components",
+  "name": "@fitnest/shared",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,10 +9,16 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
-    }
+    },
+    "./tailwind-preset": "./tailwind-preset.cjs"
   },
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.6.0",
+    "tailwind-variants": "^3.2.2"
   }
 }

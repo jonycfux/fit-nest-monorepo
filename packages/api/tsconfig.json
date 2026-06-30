@@ -6,8 +6,5 @@
     "rootDir": "./src"
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist"],
-  "references": [
-    { "path": "../components" }
-  ]
+  "exclude": ["node_modules", "dist"]
 }

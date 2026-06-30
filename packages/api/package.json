@@ -21,7 +21,6 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@fitnest/components": "*",
     "@hono/node-server": "^2.0.6",
     "@trpc/server": "^11.18.0",
     "drizzle-orm": "^0.45.2",

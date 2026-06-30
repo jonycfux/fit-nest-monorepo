@@ -1,3 +1,4 @@
+import { buttonTextVariants, buttonVariants } from "@fitnest/shared";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTRPC } from "../integrations/trpc";
@@ -20,12 +21,18 @@ function PlansPage() {
   }
 
   return (
-    <ul className="p-4">
-      {plansQuery.data.map((plan) => (
-        <li key={plan.id}>
-          {plan.name} — {plan.durationWeeks} weeks
-        </li>
-      ))}
-    </ul>
+    <div className="p-4">
+      <ul>
+        {plansQuery.data.map((plan) => (
+          <li key={plan.id}>
+            {plan.name} — {plan.durationWeeks} weeks
+          </li>
+        ))}
+      </ul>
+      {/* Shared variant from @fitnest/shared — same call used on mobile. */}
+      <button type="button" className={buttonVariants({ variant: "primary" })}>
+        <span className={buttonTextVariants({ variant: "primary" })}>Add plan</span>
+      </button>
+    </div>
   );
 }

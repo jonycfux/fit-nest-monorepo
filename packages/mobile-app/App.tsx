@@ -1,3 +1,5 @@
+import "./global.css";
+import { buttonTextVariants, buttonVariants } from "@fitnest/shared";
 import {
   QueryClient,
   QueryClientProvider,
@@ -11,7 +13,7 @@ import {
   AppState,
   type AppStateStatus,
   Platform,
-  StyleSheet,
+  Pressable,
   Text,
   View,
 } from "react-native";
@@ -53,7 +55,7 @@ function PlansScreen() {
   const plansQuery = useQuery(trpc.plans.list.queryOptions());
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 items-center justify-center gap-4 bg-background">
       {plansQuery.isPending ? (
         <Text>Loading plans…</Text>
       ) : plansQuery.error ? (
@@ -65,16 +67,13 @@ function PlansScreen() {
           </Text>
         ))
       )}
+
+      {/* Same shared variant call as the web app. */}
+      <Pressable className={buttonVariants({ variant: "primary" })}>
+        <Text className={buttonTextVariants({ variant: "primary" })}>Add plan</Text>
+      </Pressable>
+
       <StatusBar style="auto" />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
