@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+out/
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# Environment files (keep .env.example tracked)
+.env
+.env.*
+!.env.example
+
+# Local Claude Code settings (personal/local — not for shared repos)
+.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# Logs
+*.log
+npm-debug.log*

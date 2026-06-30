@@ -1,0 +1,19 @@
+{
+  "name": "fitnest-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "tsc --build",
+    "format": "biome format --write .",
+    "lint": "biome lint .",
+    "typecheck": "tsc --build --noEmit"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.1",
+    "@types/node": "26.0.1",
+    "typescript": "6.0.3"
+  }
+}
