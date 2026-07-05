@@ -86,6 +86,21 @@ A log of the major **locked-in** architectural decisions, with rationale and not
 #### Package rename
 - `@fitnest/components` → **`@fitnest/shared`** (now the design + shared-code layer, with `themes/`, `utils/`, `constants/`, `variants/`).
 
+### 2026-07-05
+
+#### Domain model → **glossary (`CONTEXT.md`) + ADRs** (design only, not yet implemented)
+- **What:** first domain-modeling pass on the training core — the vocabulary and rules for plans, workouts, exercises, and logging. Captured as a ubiquitous-language glossary in [`CONTEXT.md`](CONTEXT.md) and four decision records in [`docs/adr/`](docs/adr/).
+- **Shape:** two mirrored sides joined by the `Template Exercise`:
+  - **Planning:** `Plan → Workout → Prescribed Exercise → Prescribed Set` (composed **by reference** — join tables — so you author once and reuse).
+  - **Performance:** `Logged Workout → Logged Exercise → Logged Set` (**performed-only**: records what happened, no prescription snapshot, no adherence).
+- **Locked decisions (see ADRs):**
+  - [ADR 0001](docs/adr/0001-reference-composed-plans-performed-only-logs.md) — reference-composed plans, performed-only logs, live exercise reference + soft-delete (**Archive**).
+  - [ADR 0002](docs/adr/0002-per-user-ownership-no-cross-user-sharing.md) — every entity is **per-user**; no cross-user sharing; classics come from a (not-yet-built) signup **seed script**.
+  - [ADR 0003](docs/adr/0003-exercise-attributes-live-at-their-owning-level.md) — exercise attributes (movement-pattern, target-muscles, equipment, attachment, backups) live at their **owning level** and are read live, never copied down; only `Note` spans all three exercise levels.
+  - [ADR 0004](docs/adr/0004-exercise-variants-detached-clone-with-breadcrumb.md) — exercise **variants** are detached clones that record an immutable `variantOf` breadcrumb, with no family behavior (yet).
+- **Status / next continuation:** this is **design + docs only** — `packages/api/src/db/schema.ts` still holds just the placeholder `users` + `fitnessPlans` tables. **Next step:** translate `CONTEXT.md` (core nouns + the six attribute fields + the variant lineage) into Drizzle tables and migrations, then replace the placeholder `publicProcedure` handlers with per-user-scoped ones once identity/auth lands.
+- **Open design item (parked):** user-defined **named backup collections** per Template Exercise — the flat backup model is kept additive-compatible for it (see the `Backup Exercise` entry in `CONTEXT.md`).
+
 ---
 
 ## Conventions
