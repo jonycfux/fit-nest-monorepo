@@ -6,8 +6,11 @@ export const buttonVariants = tv({
   base: "flex flex-row items-center justify-center rounded-lg",
   variants: {
     variant: {
-      primary: "bg-primary",
-      secondary: "bg-secondary",
+      // Fill only — accent-primary is too dark to carry small text on slate.
+      primary: "bg-accent-primary",
+      // Neutral surface, not accent-secondary: the design handoff reserves cyan
+      // for wayfinding (links, active tabs) only, "one job each — do not blend."
+      secondary: "bg-surface-raised border border-default",
     },
     size: {
       sm: "px-3 py-1.5",
@@ -28,8 +31,8 @@ export const buttonTextVariants = tv({
   base: "text-base font-medium",
   variants: {
     variant: {
-      primary: "text-primary-foreground",
-      secondary: "text-secondary-foreground",
+      primary: "text-accent-primary-fg",
+      secondary: "text-primary",
     },
   },
   defaultVariants: {

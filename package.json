@@ -15,10 +15,5 @@
     "@biomejs/biome": "2.5.1",
     "@types/node": "26.0.1",
     "typescript": "7.0.2"
-  },
-  "overrides": {
-    "@expo/require-utils": {
-      "typescript": "$typescript"
-    }
   }
 }

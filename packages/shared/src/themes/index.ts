@@ -8,17 +8,17 @@
 // appears, this graduates to a `useColorScheme`-aware hook so it tracks dark mode.
 import semantic from "../../tokens/semantic.cjs";
 
-/** Available theme names (currently just "light"). */
+/** Available theme names (currently just "dark" — the product is dark-native). */
 export type ThemeName = keyof typeof semantic;
 
-/** A themeable color role (primary, background, foreground, …). */
-export type SemanticToken = keyof (typeof semantic)["light"];
+/** A themeable color role (surface-app, text-heading, accent-primary, …). */
+export type SemanticToken = keyof (typeof semantic)["dark"];
 
 /**
  * Resolve a theme's semantic roles to concrete `rgb(...)` strings.
- * @example getThemeColors().background // "rgb(255 255 255)"
+ * @example getThemeColors()["surface-app"] // "rgb(23 26 33)"
  */
-export function getThemeColors(theme: ThemeName = "light"): Record<SemanticToken, string> {
+export function getThemeColors(theme: ThemeName = "dark"): Record<SemanticToken, string> {
   return Object.fromEntries(
     Object.entries(semantic[theme]).map(([role, triplet]) => [role, `rgb(${triplet})`]),
   ) as Record<SemanticToken, string>;

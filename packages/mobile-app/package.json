@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@expo-google-fonts/barlow": "^0.4.1",
+    "@expo-google-fonts/barlow-condensed": "^0.4.1",
     "@fitnest/api": "*",
     "@fitnest/shared": "*",
     "@react-native-community/netinfo": "12.0.1",
@@ -18,7 +20,9 @@
     "@trpc/client": "^11.18.0",
     "@trpc/tanstack-react-query": "^11.18.0",
     "expo": "~56.0.12",
+    "expo-font": "~56.0.7",
     "expo-secure-store": "~56.0.4",
+    "expo-splash-screen": "~56.0.14",
     "expo-status-bar": "~56.0.4",
     "nativewind": "^4.2.6",
     "react": "19.2.3",
