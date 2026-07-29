@@ -7,6 +7,19 @@ import {
   onlineManager,
   useQuery,
 } from "@tanstack/react-query";
+import {
+  Barlow_400Regular,
+  Barlow_500Medium,
+  Barlow_600SemiBold,
+  Barlow_700Bold,
+} from "@expo-google-fonts/barlow";
+import {
+  BarlowCondensed_500Medium,
+  BarlowCondensed_600SemiBold,
+  BarlowCondensed_700Bold,
+} from "@expo-google-fonts/barlow-condensed";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import {
@@ -29,16 +42,43 @@ onlineManager.setEventListener((setOnline) =>
 const queryClient = new QueryClient();
 const trpcClient = makeTRPCClient();
 
+SplashScreen.preventAutoHideAsync();
+
 export default function App() {
+  // "Storefront Slate" brand fonts — Barlow Condensed (chrome/headings) + Barlow
+  // (body). Splash screen stays up until these are ready so no system-font flash.
+  const [fontsLoaded] = useFonts({
+    Barlow_400Regular,
+    Barlow_500Medium,
+    Barlow_600SemiBold,
+    Barlow_700Bold,
+    BarlowCondensed_500Medium,
+    BarlowCondensed_600SemiBold,
+    BarlowCondensed_700Bold,
+  });
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
   // Refetch when the app returns to the foreground (replaces window focus).
   useEffect(() => {
-    const sub = AppState.addEventListener("change", (status: AppStateStatus) => {
-      if (Platform.OS !== "web") {
-        focusManager.setFocused(status === "active");
-      }
-    });
+    const sub = AppState.addEventListener(
+      "change",
+      (status: AppStateStatus) => {
+        if (Platform.OS !== "web") {
+          focusManager.setFocused(status === "active");
+        }
+      },
+    );
     return () => sub.remove();
   }, []);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -70,7 +110,9 @@ function PlansScreen() {
 
       {/* Same shared variant call as the web app. */}
       <Pressable className={buttonVariants({ variant: "primary" })}>
-        <Text className={buttonTextVariants({ variant: "primary" })}>Add plan</Text>
+        <Text className={buttonTextVariants({ variant: "primary" })}>
+          Add plan
+        </Text>
       </Pressable>
 
       <StatusBar style="auto" />

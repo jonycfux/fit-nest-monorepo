@@ -17,3 +17,92 @@ body {
   margin: 0;
 }
 
+/* "Storefront Slate" base element treatment. Tailwind's own Preflight (part of
+   @tailwind base above) already handles box-sizing/margin-zeroing/list-reset, so
+   only the token-driven additions from the design handoff's reset.css/base.css
+   live here. Plain CSS (not @apply) because several rules need color-mix()/var()
+   composition @apply can't express. */
+@layer base {
+  body {
+    background: rgb(var(--surface-app));
+    color: rgb(var(--text-primary));
+    font-family: theme("fontFamily.body");
+    font-size: theme("fontSize.body");
+    font-weight: theme("fontWeight.normal");
+    line-height: theme("lineHeight.normal");
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: theme("fontFamily.condensed");
+    font-weight: theme("fontWeight.semibold");
+    line-height: theme("lineHeight.tight");
+    letter-spacing: theme("letterSpacing.wide");
+    text-transform: uppercase;
+    color: rgb(var(--text-heading));
+    text-wrap: balance;
+  }
+  h1 { font-size: theme("fontSize.h1"); }
+  h2 { font-size: theme("fontSize.h2"); }
+  h3 { font-size: theme("fontSize.h3"); }
+  h4 { font-size: theme("fontSize.h4"); }
+  h5, h6 { font-size: theme("fontSize.body"); }
+
+  p { text-wrap: pretty; }
+  strong, b { font-weight: theme("fontWeight.semibold"); color: rgb(var(--text-heading)); }
+  small { font-size: theme("fontSize.caption"); }
+  hr { height: 0; border: 0; border-top: 1px solid rgb(var(--border-default)); }
+  code, kbd, samp, pre { font-family: theme("fontFamily.mono"); font-size: 0.9375em; }
+  pre { overflow: auto; }
+
+  table { border-collapse: collapse; border-spacing: 0; width: 100%; }
+  th {
+    text-align: left;
+    font-family: theme("fontFamily.condensed");
+    font-weight: theme("fontWeight.semibold");
+    font-size: theme("fontSize.micro");
+    letter-spacing: theme("letterSpacing.widest");
+    text-transform: uppercase;
+    color: rgb(var(--text-secondary));
+  }
+  td, th { padding: 0; }
+
+  button:disabled, input:disabled, select:disabled, textarea:disabled {
+    cursor: default;
+    color: rgb(var(--text-disabled));
+  }
+  ::placeholder { color: rgb(var(--text-muted)); opacity: 1; }
+  input[type="number"] { font-variant-numeric: tabular-nums; }
+
+  a {
+    color: rgb(var(--text-link));
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in oklch, rgb(var(--text-link)) 40%, transparent);
+    transition: color theme("transitionDuration.fast") theme("transitionTimingFunction.standard"),
+      border-color theme("transitionDuration.fast") theme("transitionTimingFunction.standard");
+  }
+  a:hover {
+    color: rgb(var(--text-link-hover));
+    border-bottom-color: rgb(var(--text-link-hover));
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--state-focus-ring));
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: rgb(var(--accent-primary));
+    color: rgb(var(--accent-primary-fg));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
