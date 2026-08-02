@@ -1,12 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
-import {
-  loggedExercises,
-  loggedSets,
-  loggedWorkouts,
-  workouts,
-} from "../db/schema.js";
+import { loggedExercises, loggedSets, loggedWorkouts, workouts } from "../db/schema.js";
 import { protectedProcedure, router } from "../trpc.js";
 import { assertOwnedExercises, firstOrThrow } from "./_shared.js";
 
@@ -38,12 +33,7 @@ export const loggedWorkoutsRouter = router({
     const [session] = await ctx.db
       .select()
       .from(loggedWorkouts)
-      .where(
-        and(
-          eq(loggedWorkouts.id, input.id),
-          eq(loggedWorkouts.userId, ctx.user.id),
-        ),
-      );
+      .where(and(eq(loggedWorkouts.id, input.id), eq(loggedWorkouts.userId, ctx.user.id)));
     if (!session) throw new TRPCError({ code: "NOT_FOUND" });
 
     const exercises = await ctx.db
@@ -55,10 +45,7 @@ export const loggedWorkoutsRouter = router({
     const sets = await ctx.db
       .select()
       .from(loggedSets)
-      .innerJoin(
-        loggedExercises,
-        eq(loggedSets.loggedExerciseId, loggedExercises.id),
-      )
+      .innerJoin(loggedExercises, eq(loggedSets.loggedExerciseId, loggedExercises.id))
       .where(eq(loggedExercises.loggedWorkoutId, session.id))
       .orderBy(loggedSets.position);
 
@@ -90,12 +77,7 @@ export const loggedWorkoutsRouter = router({
           const [origin] = await tx
             .select({ id: workouts.id })
             .from(workouts)
-            .where(
-              and(
-                eq(workouts.id, input.workoutId),
-                eq(workouts.userId, ctx.user.id),
-              ),
-            );
+            .where(and(eq(workouts.id, input.workoutId), eq(workouts.userId, ctx.user.id)));
           if (!origin) throw new TRPCError({ code: "NOT_FOUND" });
         }
         await assertOwnedExercises(
@@ -145,12 +127,7 @@ export const loggedWorkoutsRouter = router({
   delete: protectedProcedure.input(idInput).mutation(async ({ ctx, input }) => {
     const [session] = await ctx.db
       .delete(loggedWorkouts)
-      .where(
-        and(
-          eq(loggedWorkouts.id, input.id),
-          eq(loggedWorkouts.userId, ctx.user.id),
-        ),
-      )
+      .where(and(eq(loggedWorkouts.id, input.id), eq(loggedWorkouts.userId, ctx.user.id)))
       .returning();
     if (!session) throw new TRPCError({ code: "NOT_FOUND" });
     return session;

@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 import { z } from "zod";
 import {
   backupExercises,
@@ -76,30 +76,49 @@ async function replaceBackups(
 }
 
 export const templateExercisesRouter = router({
-  // The user's active library (Archived excluded — ADR 0001).
-  list: protectedProcedure.query(({ ctx }) =>
-    ctx.db
+  // The user's active library (Archived excluded — ADR 0001). Includes primary
+  // muscles (batch-fetched, not per-row) for the Library grid's badge row.
+  list: protectedProcedure.query(async ({ ctx }) => {
+    const exercises = await ctx.db
       .select()
       .from(templateExercises)
-      .where(
-        and(
-          eq(templateExercises.userId, ctx.user.id),
-          isNull(templateExercises.archivedAt),
-        ),
-      )
-      .orderBy(templateExercises.name),
-  ),
+      .where(and(eq(templateExercises.userId, ctx.user.id), isNull(templateExercises.archivedAt)))
+      .orderBy(templateExercises.name);
+
+    const ids = exercises.map((e) => e.id);
+    const primaryMuscleRows = ids.length
+      ? await ctx.db
+          .select({
+            templateExerciseId: templateExerciseMuscles.templateExerciseId,
+            muscleGroup: templateExerciseMuscles.muscleGroup,
+          })
+          .from(templateExerciseMuscles)
+          .where(
+            and(
+              inArray(templateExerciseMuscles.templateExerciseId, ids),
+              eq(templateExerciseMuscles.role, "primary"),
+            ),
+          )
+      : [];
+
+    const primaryMusclesByExercise = new Map<string, string[]>();
+    for (const row of primaryMuscleRows) {
+      const list = primaryMusclesByExercise.get(row.templateExerciseId) ?? [];
+      list.push(row.muscleGroup);
+      primaryMusclesByExercise.set(row.templateExerciseId, list);
+    }
+
+    return exercises.map((exercise) => ({
+      ...exercise,
+      primaryMuscles: primaryMusclesByExercise.get(exercise.id) ?? [],
+    }));
+  }),
 
   byId: protectedProcedure.input(idInput).query(async ({ ctx, input }) => {
     const [exercise] = await ctx.db
       .select()
       .from(templateExercises)
-      .where(
-        and(
-          eq(templateExercises.id, input.id),
-          eq(templateExercises.userId, ctx.user.id),
-        ),
-      );
+      .where(and(eq(templateExercises.id, input.id), eq(templateExercises.userId, ctx.user.id)));
     if (!exercise) throw new TRPCError({ code: "NOT_FOUND" });
 
     const muscles = await ctx.db
@@ -161,12 +180,7 @@ export const templateExercisesRouter = router({
         const [exercise] = await tx
           .update(templateExercises)
           .set(fields)
-          .where(
-            and(
-              eq(templateExercises.id, id),
-              eq(templateExercises.userId, ctx.user.id),
-            ),
-          )
+          .where(and(eq(templateExercises.id, id), eq(templateExercises.userId, ctx.user.id)))
           .returning();
         if (!exercise) throw new TRPCError({ code: "NOT_FOUND" });
         if (muscles) await replaceMuscles(tx, id, muscles);
@@ -182,12 +196,7 @@ export const templateExercisesRouter = router({
     const [exercise] = await ctx.db
       .update(templateExercises)
       .set({ archivedAt: new Date() })
-      .where(
-        and(
-          eq(templateExercises.id, input.id),
-          eq(templateExercises.userId, ctx.user.id),
-        ),
-      )
+      .where(and(eq(templateExercises.id, input.id), eq(templateExercises.userId, ctx.user.id)))
       .returning();
     if (!exercise) throw new TRPCError({ code: "NOT_FOUND" });
     return exercise;
@@ -235,9 +244,7 @@ export const templateExercisesRouter = router({
         if (srcMuscles.length > 0) {
           await tx
             .insert(templateExerciseMuscles)
-            .values(
-              srcMuscles.map((m) => ({ ...m, templateExerciseId: variant.id })),
-            );
+            .values(srcMuscles.map((m) => ({ ...m, templateExerciseId: variant.id })));
         }
 
         const srcBackups = await tx

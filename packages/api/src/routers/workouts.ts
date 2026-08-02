@@ -1,11 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
-import {
-  prescribedExercises,
-  prescribedSets,
-  workouts,
-} from "../db/schema.js";
+import { prescribedExercises, prescribedSets, workouts } from "../db/schema.js";
 import { protectedProcedure, router } from "../trpc.js";
 import { assertOwnedExercises, firstOrThrow } from "./_shared.js";
 
@@ -27,11 +23,7 @@ const exerciseInput = z.object({
 
 export const workoutsRouter = router({
   list: protectedProcedure.query(({ ctx }) =>
-    ctx.db
-      .select()
-      .from(workouts)
-      .where(eq(workouts.userId, ctx.user.id))
-      .orderBy(workouts.name),
+    ctx.db.select().from(workouts).where(eq(workouts.userId, ctx.user.id)).orderBy(workouts.name),
   ),
 
   // The workout with its ordered Prescribed Exercises, each with its sets.
@@ -117,12 +109,7 @@ export const workoutsRouter = router({
         const [workout] = await tx
           .select({ id: workouts.id })
           .from(workouts)
-          .where(
-            and(
-              eq(workouts.id, input.workoutId),
-              eq(workouts.userId, ctx.user.id),
-            ),
-          );
+          .where(and(eq(workouts.id, input.workoutId), eq(workouts.userId, ctx.user.id)));
         if (!workout) throw new TRPCError({ code: "NOT_FOUND" });
         await assertOwnedExercises(
           tx,

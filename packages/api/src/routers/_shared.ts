@@ -22,12 +22,7 @@ export async function assertOwnedExercises(tx: Tx, userId: string, ids: string[]
   const owned = await tx
     .select({ id: templateExercises.id })
     .from(templateExercises)
-    .where(
-      and(
-        eq(templateExercises.userId, userId),
-        inArray(templateExercises.id, unique),
-      ),
-    );
+    .where(and(eq(templateExercises.userId, userId), inArray(templateExercises.id, unique)));
   if (owned.length !== unique.length) {
     throw new TRPCError({
       code: "BAD_REQUEST",

@@ -1,3 +1,4 @@
+import { dashboardRouter } from "./routers/dashboard.js";
 import { healthRouter } from "./routers/health.js";
 import { loggedWorkoutsRouter } from "./routers/logged-workouts.js";
 import { plansRouter } from "./routers/plans.js";
@@ -11,6 +12,7 @@ export const appRouter = router({
   workouts: workoutsRouter,
   plans: plansRouter,
   loggedWorkouts: loggedWorkoutsRouter,
+  dashboard: dashboardRouter,
 });
 
 export type AppRouter = typeof appRouter;
