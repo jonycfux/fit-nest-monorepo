@@ -1,9 +1,9 @@
-import { type VariantProps, tv } from "tailwind-variants";
+import { tv, type VariantProps } from "tailwind-variants";
 
 // Platform-agnostic Tailwind class definitions. The same call produces the same
 // class string for a web <button> and a native <Pressable> (via NativeWind).
 export const buttonVariants = tv({
-  base: "flex flex-row items-center justify-center rounded-lg",
+  base: "flex flex-row items-center justify-center rounded-lg transition-[filter,transform] duration-fast ease-standard hover:brightness-110 active:scale-[0.97]",
   variants: {
     variant: {
       // Fill only — accent-primary is too dark to carry small text on slate.
