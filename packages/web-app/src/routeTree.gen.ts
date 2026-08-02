@@ -10,43 +10,118 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PlansRouteImport } from './routes/plans'
+import { Route as ShellRouteImport } from './routes/_shell'
+import { Route as ShellActiveRouteImport } from './routes/_shell.active'
+import { Route as ShellLibraryRouteImport } from './routes/_shell.library'
+import { Route as ShellPlansRouteImport } from './routes/_shell.plans'
+import { Route as ShellLibraryExerciseIdRouteImport } from './routes/_shell.library_.$exerciseId'
+import { Route as ShellPlansPlanIdRouteImport } from './routes/_shell.plans_.$planId'
+import { Route as ShellLibraryExerciseIdEditRouteImport } from './routes/_shell.library_.$exerciseId_.edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PlansRoute = PlansRouteImport.update({
-  id: '/plans',
-  path: '/plans',
+const ShellRoute = ShellRouteImport.update({
+  id: '/_shell',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShellActiveRoute = ShellActiveRouteImport.update({
+  id: '/active',
+  path: '/active',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellLibraryRoute = ShellLibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellPlansRoute = ShellPlansRouteImport.update({
+  id: '/plans',
+  path: '/plans',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellLibraryExerciseIdRoute = ShellLibraryExerciseIdRouteImport.update({
+  id: '/library_/$exerciseId',
+  path: '/library/$exerciseId',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellPlansPlanIdRoute = ShellPlansPlanIdRouteImport.update({
+  id: '/plans_/$planId',
+  path: '/plans/$planId',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellLibraryExerciseIdEditRoute =
+  ShellLibraryExerciseIdEditRouteImport.update({
+    id: '/library_/$exerciseId_/edit',
+    path: '/library/$exerciseId/edit',
+    getParentRoute: () => ShellRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/plans': typeof PlansRoute
+  '/active': typeof ShellActiveRoute
+  '/library': typeof ShellLibraryRoute
+  '/plans': typeof ShellPlansRoute
+  '/library/$exerciseId': typeof ShellLibraryExerciseIdRoute
+  '/plans/$planId': typeof ShellPlansPlanIdRoute
+  '/library/$exerciseId/edit': typeof ShellLibraryExerciseIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/plans': typeof PlansRoute
+  '/active': typeof ShellActiveRoute
+  '/library': typeof ShellLibraryRoute
+  '/plans': typeof ShellPlansRoute
+  '/library/$exerciseId': typeof ShellLibraryExerciseIdRoute
+  '/plans/$planId': typeof ShellPlansPlanIdRoute
+  '/library/$exerciseId/edit': typeof ShellLibraryExerciseIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/plans': typeof PlansRoute
+  '/_shell': typeof ShellRouteWithChildren
+  '/_shell/active': typeof ShellActiveRoute
+  '/_shell/library': typeof ShellLibraryRoute
+  '/_shell/plans': typeof ShellPlansRoute
+  '/_shell/library_/$exerciseId': typeof ShellLibraryExerciseIdRoute
+  '/_shell/plans_/$planId': typeof ShellPlansPlanIdRoute
+  '/_shell/library_/$exerciseId_/edit': typeof ShellLibraryExerciseIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/plans'
+  fullPaths:
+    | '/'
+    | '/active'
+    | '/library'
+    | '/plans'
+    | '/library/$exerciseId'
+    | '/plans/$planId'
+    | '/library/$exerciseId/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/plans'
-  id: '__root__' | '/' | '/plans'
+  to:
+    | '/'
+    | '/active'
+    | '/library'
+    | '/plans'
+    | '/library/$exerciseId'
+    | '/plans/$planId'
+    | '/library/$exerciseId/edit'
+  id:
+    | '__root__'
+    | '/'
+    | '/_shell'
+    | '/_shell/active'
+    | '/_shell/library'
+    | '/_shell/plans'
+    | '/_shell/library_/$exerciseId'
+    | '/_shell/plans_/$planId'
+    | '/_shell/library_/$exerciseId_/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  PlansRoute: typeof PlansRoute
+  ShellRoute: typeof ShellRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -58,19 +133,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/plans': {
-      id: '/plans'
+    '/_shell': {
+      id: '/_shell'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof ShellRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_shell/active': {
+      id: '/_shell/active'
+      path: '/active'
+      fullPath: '/active'
+      preLoaderRoute: typeof ShellActiveRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/library': {
+      id: '/_shell/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof ShellLibraryRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/plans': {
+      id: '/_shell/plans'
       path: '/plans'
       fullPath: '/plans'
-      preLoaderRoute: typeof PlansRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ShellPlansRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/library_/$exerciseId': {
+      id: '/_shell/library_/$exerciseId'
+      path: '/library/$exerciseId'
+      fullPath: '/library/$exerciseId'
+      preLoaderRoute: typeof ShellLibraryExerciseIdRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/plans_/$planId': {
+      id: '/_shell/plans_/$planId'
+      path: '/plans/$planId'
+      fullPath: '/plans/$planId'
+      preLoaderRoute: typeof ShellPlansPlanIdRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/library_/$exerciseId_/edit': {
+      id: '/_shell/library_/$exerciseId_/edit'
+      path: '/library/$exerciseId/edit'
+      fullPath: '/library/$exerciseId/edit'
+      preLoaderRoute: typeof ShellLibraryExerciseIdEditRouteImport
+      parentRoute: typeof ShellRoute
     }
   }
 }
 
+interface ShellRouteChildren {
+  ShellActiveRoute: typeof ShellActiveRoute
+  ShellLibraryRoute: typeof ShellLibraryRoute
+  ShellPlansRoute: typeof ShellPlansRoute
+  ShellLibraryExerciseIdRoute: typeof ShellLibraryExerciseIdRoute
+  ShellPlansPlanIdRoute: typeof ShellPlansPlanIdRoute
+  ShellLibraryExerciseIdEditRoute: typeof ShellLibraryExerciseIdEditRoute
+}
+
+const ShellRouteChildren: ShellRouteChildren = {
+  ShellActiveRoute: ShellActiveRoute,
+  ShellLibraryRoute: ShellLibraryRoute,
+  ShellPlansRoute: ShellPlansRoute,
+  ShellLibraryExerciseIdRoute: ShellLibraryExerciseIdRoute,
+  ShellPlansPlanIdRoute: ShellPlansPlanIdRoute,
+  ShellLibraryExerciseIdEditRoute: ShellLibraryExerciseIdEditRoute,
+}
+
+const ShellRouteWithChildren = ShellRoute._addFileChildren(ShellRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  PlansRoute: PlansRoute,
+  ShellRoute: ShellRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

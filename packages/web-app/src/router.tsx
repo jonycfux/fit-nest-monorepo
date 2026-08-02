@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
-import { TRPCProvider, makeTRPCClient } from "./integrations/trpc";
+import { makeTRPCClient, TRPCProvider } from "./integrations/trpc";
 import { routeTree } from "./routeTree.gen";
 
 export function getRouter() {
