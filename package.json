@@ -5,15 +5,19 @@
   "workspaces": [
     "packages/*"
   ],
+  "packageManager": "npm@10.9.3",
   "scripts": {
-    "build": "tsc --build",
+    "build": "turbo run build",
+    "dev": "turbo watch dev",
     "format": "biome format --write .",
     "lint": "biome lint .",
-    "typecheck": "tsc --build --noEmit"
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.1",
     "@types/node": "26.0.1",
+    "turbo": "2.10.9",
     "typescript": "7.0.2"
   }
 }

@@ -9,6 +9,9 @@ out/
 # TypeScript incremental build info
 *.tsbuildinfo
 
+# Turborepo local cache + per-package run logs
+.turbo
+
 # Environment files (keep .env.example tracked)
 .env
 .env.*
