@@ -48,6 +48,20 @@ npm run lint        # biome lint .
 npm run format      # biome format --write .
 ```
 
+### End-to-end tests (Playwright)
+
+`tests/seed.spec.ts` verifies the data from `packages/api/src/db/seed.ts` renders correctly in the web-app. It requires the API and web-app running locally, with auth bypassed as the seeded dev user:
+
+```bash
+npm run db:migrate -w @fitnest/api
+DEV_AUTH_BYPASS=true npm run db:seed -w @fitnest/api   # idempotent, safe to re-run
+DEV_AUTH_BYPASS=true npm run dev -w @fitnest/api       # http://localhost:4000
+
+npx playwright test                                    # boots web-app dev server itself
+```
+
+There's no frontend login yet — with `DEV_AUTH_BYPASS=true` on the API, every request is treated as the seeded `dev@fitnest.local` user automatically.
+
 ---
 
 ## Architecture decision changelog
