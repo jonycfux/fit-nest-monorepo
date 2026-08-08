@@ -14,6 +14,7 @@ import {
   users,
   workouts,
 } from "./schema.js";
+import { SEED_EXERCISES } from "./seed-data/exercises.js";
 
 // Fixed dev user, referenced by context.ts's DEV_AUTH_BYPASS fallback.
 export const DEV_USER_EMAIL = "dev@fitnest.local";
@@ -24,105 +25,14 @@ function mustGet<K, V>(map: Map<K, V>, key: K): V {
   return value;
 }
 
-type SeedExercise = {
+export type SeedExercise = {
   name: string;
   movementPattern: (typeof templateExercises.$inferInsert)["movementPattern"];
   equipment?: (typeof templateExercises.$inferInsert)["equipment"];
   muscles: { muscleGroup: string; role: "primary" | "secondary" }[];
 };
 
-const EXERCISES: SeedExercise[] = [
-  {
-    name: "Barbell Bench Press",
-    movementPattern: "push",
-    equipment: "barbell",
-    muscles: [
-      { muscleGroup: "chest", role: "primary" },
-      { muscleGroup: "triceps", role: "secondary" },
-      { muscleGroup: "delts", role: "secondary" },
-    ],
-  },
-  {
-    name: "Overhead Press",
-    movementPattern: "push",
-    equipment: "barbell",
-    muscles: [
-      { muscleGroup: "delts", role: "primary" },
-      { muscleGroup: "triceps", role: "secondary" },
-    ],
-  },
-  {
-    name: "Barbell Back Squat",
-    movementPattern: "squat",
-    equipment: "barbell",
-    muscles: [
-      { muscleGroup: "quads", role: "primary" },
-      { muscleGroup: "glutes", role: "secondary" },
-      { muscleGroup: "hamstrings", role: "secondary" },
-    ],
-  },
-  {
-    name: "Conventional Deadlift",
-    movementPattern: "hinge",
-    equipment: "barbell",
-    muscles: [
-      { muscleGroup: "hamstrings", role: "primary" },
-      { muscleGroup: "back", role: "secondary" },
-      { muscleGroup: "glutes", role: "secondary" },
-    ],
-  },
-  {
-    name: "Romanian Deadlift",
-    movementPattern: "hinge",
-    equipment: "barbell",
-    muscles: [
-      { muscleGroup: "hamstrings", role: "primary" },
-      { muscleGroup: "glutes", role: "secondary" },
-    ],
-  },
-  {
-    name: "Barbell Row",
-    movementPattern: "pull",
-    equipment: "barbell",
-    muscles: [
-      { muscleGroup: "back", role: "primary" },
-      { muscleGroup: "biceps", role: "secondary" },
-    ],
-  },
-  {
-    name: "Pull-up",
-    movementPattern: "pull",
-    equipment: "bodyweight",
-    muscles: [
-      { muscleGroup: "back", role: "primary" },
-      { muscleGroup: "biceps", role: "secondary" },
-    ],
-  },
-  {
-    name: "Lat Pulldown",
-    movementPattern: "pull",
-    equipment: "cable",
-    muscles: [
-      { muscleGroup: "back", role: "primary" },
-      { muscleGroup: "biceps", role: "secondary" },
-    ],
-  },
-  {
-    name: "Dumbbell Walking Lunge",
-    movementPattern: "lunge",
-    equipment: "dumbbell",
-    muscles: [
-      { muscleGroup: "quads", role: "primary" },
-      { muscleGroup: "glutes", role: "secondary" },
-    ],
-  },
-  {
-    name: "Plank",
-    movementPattern: "core",
-    equipment: "bodyweight",
-    muscles: [{ muscleGroup: "core", role: "primary" }],
-  },
-];
+const EXERCISES: SeedExercise[] = SEED_EXERCISES;
 
 async function seed() {
   const [existing] = await db.select().from(users).where(eq(users.email, DEV_USER_EMAIL));
@@ -163,13 +73,13 @@ async function seed() {
   // A couple of backup links, just so Exercise Detail has something to show.
   await db.insert(backupExercises).values([
     {
-      templateExerciseId: mustGet(exerciseIds, "Barbell Bench Press"),
-      backupExerciseId: mustGet(exerciseIds, "Overhead Press"),
+      templateExerciseId: mustGet(exerciseIds, "Barbell Bench Press - Medium Grip"),
+      backupExerciseId: mustGet(exerciseIds, "Barbell Shoulder Press"),
       position: 0,
     },
     {
-      templateExerciseId: mustGet(exerciseIds, "Pull-up"),
-      backupExerciseId: mustGet(exerciseIds, "Lat Pulldown"),
+      templateExerciseId: mustGet(exerciseIds, "Pullups"),
+      backupExerciseId: mustGet(exerciseIds, "Wide-Grip Lat Pulldown"),
       position: 0,
     },
   ]);
@@ -210,7 +120,7 @@ async function seed() {
 
   const pushDay = await makeWorkout("Push Day A", [
     {
-      exercise: "Barbell Bench Press",
+      exercise: "Barbell Bench Press - Medium Grip",
       sets: [
         { reps: 8, load: 60 },
         { reps: 8, load: 60 },
@@ -219,7 +129,7 @@ async function seed() {
       ],
     },
     {
-      exercise: "Overhead Press",
+      exercise: "Barbell Shoulder Press",
       sets: [
         { reps: 10, load: 35 },
         { reps: 10, load: 35 },
@@ -230,7 +140,7 @@ async function seed() {
 
   const pullDay = await makeWorkout("Pull Day A", [
     {
-      exercise: "Barbell Row",
+      exercise: "Bent Over Barbell Row",
       sets: [
         { reps: 8, load: 55 },
         { reps: 8, load: 55 },
@@ -238,9 +148,9 @@ async function seed() {
         { reps: 6, load: 60 },
       ],
     },
-    { exercise: "Pull-up", sets: [{ reps: 8 }, { reps: 8 }, { reps: 6 }] },
+    { exercise: "Pullups", sets: [{ reps: 8 }, { reps: 8 }, { reps: 6 }] },
     {
-      exercise: "Lat Pulldown",
+      exercise: "Wide-Grip Lat Pulldown",
       sets: [
         { reps: 10, load: 45 },
         { reps: 10, load: 45 },
@@ -251,7 +161,7 @@ async function seed() {
 
   const legDay = await makeWorkout("Leg Day A", [
     {
-      exercise: "Barbell Back Squat",
+      exercise: "Barbell Squat",
       sets: [
         { reps: 6, load: 80 },
         { reps: 6, load: 80 },
@@ -268,7 +178,7 @@ async function seed() {
       ],
     },
     {
-      exercise: "Dumbbell Walking Lunge",
+      exercise: "Barbell Walking Lunge",
       sets: [
         { reps: 10, load: 20 },
         { reps: 10, load: 20 },

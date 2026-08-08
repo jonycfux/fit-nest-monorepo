@@ -3,6 +3,11 @@ import { expect, test } from "@playwright/test";
 // Verifies data produced by packages/api/src/db/seed.ts renders correctly in
 // the web-app. Requires: Postgres migrated + seeded, API running with
 // DEV_AUTH_BYPASS=true (see README for setup steps).
+//
+// The seeded exercise library is a ~260-exercise curated subset of
+// free-exercise-db (see packages/api/scripts/build-exercise-seed-data.ts), so
+// these checks only assert on the handful of exercises the seeded plan's
+// workouts actually reference, not the full library.
 
 const MUSCLE_GROUPS = [
   "chest",
@@ -17,15 +22,15 @@ const MUSCLE_GROUPS = [
 ];
 
 const EXERCISE_NAMES = [
-  "Barbell Bench Press",
-  "Overhead Press",
-  "Barbell Back Squat",
-  "Conventional Deadlift",
+  "Barbell Bench Press - Medium Grip",
+  "Barbell Shoulder Press",
+  "Barbell Squat",
+  "Barbell Deadlift",
   "Romanian Deadlift",
-  "Barbell Row",
-  "Pull-up",
-  "Lat Pulldown",
-  "Dumbbell Walking Lunge",
+  "Bent Over Barbell Row",
+  "Pullups",
+  "Wide-Grip Lat Pulldown",
+  "Barbell Walking Lunge",
   "Plank",
 ];
 
@@ -79,7 +84,7 @@ test.describe("Plan Builder (/plans/$planId)", () => {
 });
 
 test.describe("Exercise Library (/library)", () => {
-  test("lists all seeded template exercises", async ({ page }) => {
+  test("lists seeded template exercises", async ({ page }) => {
     await page.goto("/library");
 
     await expect(page.getByRole("heading", { name: "Exercise Library" })).toBeVisible();
@@ -89,7 +94,9 @@ test.describe("Exercise Library (/library)", () => {
     }
 
     // Library cards render primary muscles only (secondary muscles show on the detail page).
-    const benchPressCard = page.getByRole("link", { name: /Barbell Bench Press/ });
+    // The link's accessible name includes trailing badge text, so anchor on the exercise
+    // name as a prefix rather than an exact match.
+    const benchPressCard = page.getByRole("link", { name: /^Barbell Bench Press - Medium Grip\b/ });
     await expect(benchPressCard.getByText("push")).toBeVisible();
     await expect(benchPressCard.getByText("chest")).toBeVisible();
     await expect(benchPressCard.getByText("barbell", { exact: true })).toBeVisible();
@@ -99,19 +106,21 @@ test.describe("Exercise Library (/library)", () => {
 test.describe("Exercise detail (/library/$exerciseId)", () => {
   test("shows backup exercises seeded for Barbell Bench Press", async ({ page }) => {
     await page.goto("/library");
-    await page.getByRole("link", { name: /Barbell Bench Press/ }).click();
+    await page.getByRole("link", { name: /^Barbell Bench Press - Medium Grip\b/ }).click();
 
-    await expect(page.getByRole("heading", { name: "Barbell Bench Press" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Barbell Bench Press - Medium Grip" }),
+    ).toBeVisible();
     await expect(page.getByText("1 backups")).toBeVisible();
-    await expect(page.getByText("Overhead Press")).toBeVisible();
+    await expect(page.getByText("Barbell Shoulder Press")).toBeVisible();
   });
 
-  test("shows backup exercises seeded for Pull-up", async ({ page }) => {
+  test("shows backup exercises seeded for Pullups", async ({ page }) => {
     await page.goto("/library");
-    await page.getByRole("link", { name: /^Pull-up/ }).click();
+    await page.getByRole("link", { name: /^Pullups\b/ }).click();
 
-    await expect(page.getByRole("heading", { name: "Pull-up" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Pullups" })).toBeVisible();
     await expect(page.getByText("1 backups")).toBeVisible();
-    await expect(page.getByText("Lat Pulldown")).toBeVisible();
+    await expect(page.getByText("Wide-Grip Lat Pulldown")).toBeVisible();
   });
 });

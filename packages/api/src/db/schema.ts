@@ -52,6 +52,10 @@ export const equipment = pgEnum("equipment", [
   "bodyweight",
   "kettlebell",
   "band",
+  "foam-roller",
+  "medicine-ball",
+  "exercise-ball",
+  "ez-bar",
 ]);
 
 // ---------------------------------------------------------------------------
