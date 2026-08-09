@@ -15,6 +15,8 @@ import {
   workouts,
 } from "./schema.js";
 import { SEED_EXERCISES } from "./seed-data/exercises.js";
+import { SEED_BACKUP_LINKS, SEED_PLAN, SEED_SESSIONS, SEED_WORKOUTS } from "./seed-data/plan.js";
+import type { SeedExercise, SeedWorkout } from "./seed-data/types.js";
 
 // Fixed dev user, referenced by context.ts's DEV_AUTH_BYPASS fallback.
 export const DEV_USER_EMAIL = "dev@fitnest.local";
@@ -24,13 +26,6 @@ function mustGet<K, V>(map: Map<K, V>, key: K): V {
   if (value === undefined) throw new Error(`Seed data missing expected key: ${String(key)}`);
   return value;
 }
-
-export type SeedExercise = {
-  name: string;
-  movementPattern: (typeof templateExercises.$inferInsert)["movementPattern"];
-  equipment?: (typeof templateExercises.$inferInsert)["equipment"];
-  muscles: { muscleGroup: string; role: "primary" | "secondary" }[];
-};
 
 const EXERCISES: SeedExercise[] = SEED_EXERCISES;
 
@@ -70,30 +65,21 @@ async function seed() {
     );
   }
 
-  // A couple of backup links, just so Exercise Detail has something to show.
-  await db.insert(backupExercises).values([
-    {
-      templateExerciseId: mustGet(exerciseIds, "Barbell Bench Press - Medium Grip"),
-      backupExerciseId: mustGet(exerciseIds, "Barbell Shoulder Press"),
+  await db.insert(backupExercises).values(
+    SEED_BACKUP_LINKS.map((link) => ({
+      templateExerciseId: mustGet(exerciseIds, link.exercise),
+      backupExerciseId: mustGet(exerciseIds, link.backup),
       position: 0,
-    },
-    {
-      templateExerciseId: mustGet(exerciseIds, "Pullups"),
-      backupExerciseId: mustGet(exerciseIds, "Wide-Grip Lat Pulldown"),
-      position: 0,
-    },
-  ]);
+    })),
+  );
 
   const [plan] = await db
     .insert(fitnessPlans)
-    .values({ userId: userId, name: "PPL 6-Week Hypertrophy", durationWeeks: 6 })
+    .values({ userId: userId, name: SEED_PLAN.name, durationWeeks: SEED_PLAN.durationWeeks })
     .returning();
   if (!plan) throw new Error("Failed to insert plan");
 
-  async function makeWorkout(
-    name: string,
-    prescriptions: { exercise: string; sets: { reps: number; load?: number }[] }[],
-  ) {
+  async function makeWorkout({ name, prescriptions }: SeedWorkout) {
     const [workout] = await db.insert(workouts).values({ userId: userId, name }).returning();
     if (!workout) throw new Error(`Failed to insert workout ${name}`);
     for (const [position, p] of prescriptions.entries()) {
@@ -118,93 +104,25 @@ async function seed() {
     return workout;
   }
 
-  const pushDay = await makeWorkout("Push Day A", [
-    {
-      exercise: "Barbell Bench Press - Medium Grip",
-      sets: [
-        { reps: 8, load: 60 },
-        { reps: 8, load: 60 },
-        { reps: 8, load: 65 },
-        { reps: 6, load: 65 },
-      ],
-    },
-    {
-      exercise: "Barbell Shoulder Press",
-      sets: [
-        { reps: 10, load: 35 },
-        { reps: 10, load: 35 },
-        { reps: 8, load: 37.5 },
-      ],
-    },
-  ]);
+  const workoutsByName = new Map<string, { id: string }>();
+  for (const def of SEED_WORKOUTS) {
+    workoutsByName.set(def.name, await makeWorkout(def));
+  }
 
-  const pullDay = await makeWorkout("Pull Day A", [
-    {
-      exercise: "Bent Over Barbell Row",
-      sets: [
-        { reps: 8, load: 55 },
-        { reps: 8, load: 55 },
-        { reps: 8, load: 60 },
-        { reps: 6, load: 60 },
-      ],
-    },
-    { exercise: "Pullups", sets: [{ reps: 8 }, { reps: 8 }, { reps: 6 }] },
-    {
-      exercise: "Wide-Grip Lat Pulldown",
-      sets: [
-        { reps: 10, load: 45 },
-        { reps: 10, load: 45 },
-        { reps: 10, load: 45 },
-      ],
-    },
-  ]);
+  await db.insert(planWorkouts).values(
+    SEED_WORKOUTS.map((def, position) => ({
+      planId: plan.id,
+      workoutId: mustGet(workoutsByName, def.name).id,
+      position,
+    })),
+  );
 
-  const legDay = await makeWorkout("Leg Day A", [
-    {
-      exercise: "Barbell Squat",
-      sets: [
-        { reps: 6, load: 80 },
-        { reps: 6, load: 80 },
-        { reps: 6, load: 85 },
-        { reps: 5, load: 85 },
-      ],
-    },
-    {
-      exercise: "Romanian Deadlift",
-      sets: [
-        { reps: 10, load: 60 },
-        { reps: 10, load: 60 },
-        { reps: 10, load: 65 },
-      ],
-    },
-    {
-      exercise: "Barbell Walking Lunge",
-      sets: [
-        { reps: 10, load: 20 },
-        { reps: 10, load: 20 },
-        { reps: 10, load: 20 },
-      ],
-    },
-  ]);
-
-  await db.insert(planWorkouts).values([
-    { planId: plan.id, workoutId: pushDay.id, position: 0 },
-    { planId: plan.id, workoutId: pullDay.id, position: 1 },
-    { planId: plan.id, workoutId: legDay.id, position: 2 },
-  ]);
-
-  // Logged history: this week (partial, for a realistic mixed-progress volume
-  // panel) + last week (full) + three weeks ago (for the monthly view).
   const DAY_MS = 24 * 60 * 60 * 1000;
   const now = Date.now();
-  const sessions: { workout: typeof pushDay; daysAgo: number }[] = [
-    { workout: pushDay, daysAgo: 1 },
-    { workout: pullDay, daysAgo: 3 },
-    { workout: legDay, daysAgo: 9 },
-    { workout: pushDay, daysAgo: 10 },
-    { workout: pullDay, daysAgo: 12 },
-    { workout: legDay, daysAgo: 23 },
-  ];
+  const sessions = SEED_SESSIONS.map((s) => ({
+    workout: mustGet(workoutsByName, s.workout),
+    daysAgo: s.daysAgo,
+  }));
 
   for (const session of sessions) {
     const workoutExercises = await db

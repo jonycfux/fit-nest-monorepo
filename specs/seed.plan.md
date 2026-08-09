@@ -1,8 +1,8 @@
 # Seeded Data Verification — Test Plan
 
 Verifies that the fixed dev-user data produced by `packages/api/src/db/seed.ts` renders
-correctly across the web-app: a ~260-exercise curated exercise library (mapped from
-free-exercise-db by `packages/api/scripts/build-exercise-seed-data.ts`), 2 backup-exercise
+correctly across the web-app: a ~156-exercise curated exercise library (derived from
+free-exercise-db, see `packages/api/src/db/seed-data/exercises.ts`), 2 backup-exercise
 links, 1 fitness plan ("PPL 6-Week Hypertrophy") with 3 workouts, and 6 logged workout
 sessions. Since the library is large, these scenarios only assert on the handful of
 exercises the seeded plan's workouts actually reference, not the full list.
@@ -37,45 +37,42 @@ frontend login flow — each scenario navigates directly to its route.
 6. **Expect:** the workout dropdown contains options "Push Day A", "Pull Day A", and
    "Leg Day A".
 7. Select "Push Day A" from the workout dropdown.
-8. **Expect:** the cart header shows "Push Day A · 2 exercises" (Barbell Bench Press -
-   Medium Grip, Barbell Shoulder Press).
+8. **Expect:** the cart header shows "Push Day A · 2 exercises" (Bench Press,
+   Shoulder Press).
 9. Select "Pull Day A" from the workout dropdown.
-10. **Expect:** the cart header shows "Pull Day A · 3 exercises" (Bent Over Barbell Row,
-    Pullups, Wide-Grip Lat Pulldown).
+10. **Expect:** the cart header shows "Pull Day A · 3 exercises" (Bent Over Row,
+    Pullups, Lat Pulldown).
 11. Select "Leg Day A" from the workout dropdown.
-12. **Expect:** the cart header shows "Leg Day A · 3 exercises" (Barbell Squat, Romanian
-    Deadlift, Barbell Walking Lunge).
+12. **Expect:** the cart header shows "Leg Day A · 3 exercises" (Squat, Romanian
+    Deadlift, Walking Lunge).
 
 ## 3. Exercise Library lists seeded template exercises
 
 1. Navigate to `/library`.
 2. **Expect:** an "Exercise Library" heading is visible.
 3. **Expect:** the exercises referenced by the seeded workouts are visible as cards:
-   Barbell Bench Press - Medium Grip, Barbell Shoulder Press, Barbell Squat, Barbell
-   Deadlift, Romanian Deadlift, Bent Over Barbell Row, Pullups, Wide-Grip Lat Pulldown,
-   Barbell Walking Lunge, Plank.
-4. **Expect:** the "Barbell Bench Press - Medium Grip" card shows a "push"
+   Bench Press, Shoulder Press, Squat, Deadlift, Romanian Deadlift, Bent Over Row,
+   Pullups, Lat Pulldown, Walking Lunge, Plank.
+4. **Expect:** the "Bench Press" card shows a "push"
    movement-pattern badge, a "chest" primary-muscle badge (its only primary muscle —
    secondary muscles are not shown on the card, only on the detail page), and a
    "barbell" equipment badge.
 
 ## 4. Exercise detail shows seeded backup-exercise links
 
-### 4a. Barbell Bench Press - Medium Grip → Barbell Shoulder Press
+### 4a. Bench Press → Shoulder Press
 
 1. Navigate to `/library`.
-2. Click the "Barbell Bench Press - Medium Grip" card.
-3. **Expect:** a "Barbell Bench Press - Medium Grip" heading is visible.
-4. **Expect:** the "Backup exercises" panel shows "1 backups" and lists "Barbell
-   Shoulder Press".
+2. Click the "Bench Press" card.
+3. **Expect:** a "Bench Press" heading is visible.
+4. **Expect:** the "Backup exercises" panel shows "1 backups" and lists "Shoulder Press".
 
-### 4b. Pullups → Wide-Grip Lat Pulldown
+### 4b. Pullups → Lat Pulldown
 
 1. Navigate to `/library`.
 2. Click the "Pullups" card.
 3. **Expect:** a "Pullups" heading is visible.
-4. **Expect:** the "Backup exercises" panel shows "1 backups" and lists "Wide-Grip Lat
-   Pulldown".
+4. **Expect:** the "Backup exercises" panel shows "1 backups" and lists "Lat Pulldown".
 
 ## Out of scope
 
@@ -87,4 +84,9 @@ logged history via the Dashboard's volume panel (Scenario 1).
 
 ## Implementation
 
-Implemented in `tests/seed.spec.ts`.
+Implemented in `tests/seed.spec.ts`. The spec imports the seed definitions directly
+(`packages/api/src/db/seed-data/exercises.ts` and `seed-data/plan.ts`) and derives its
+assertions from them — exercise names, workout names, per-workout exercise counts, plan
+name/duration, backup links, and the sample card's badges. Changing the seed data does
+not require editing the test. Those modules are pure data with no DB imports, so the
+test process never opens a Postgres connection.

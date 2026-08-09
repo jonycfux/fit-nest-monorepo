@@ -11,6 +11,16 @@ import {
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
+// TODO: handle variant parameters
+// - Grip
+// - Stance
+// - ROM
+// - Tempo
+// - Unilateral vs. Bilateral
+// - Seated vs. Standing vs. Lying
+// - etc.
+// TODO: handle name change (aliasing) conditions based on variant parameters (e.g., "Barbell Bench Press" → "Incline Barbell Bench Press" if the variant is an incline bench).
+
 // ---------------------------------------------------------------------------
 // Global, system-owned enums.
 // These are fixed reference vocabularies (universal anatomy / equipment), NOT
