@@ -1,5 +1,7 @@
+import type { AppRouter } from "@fitnest/api";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import type { inferRouterInputs } from "@trpc/server";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { useTRPC } from "../integrations/trpc";
@@ -14,7 +16,13 @@ export const Route = createFileRoute("/_shell/plans")({
   component: DashboardPage,
 });
 
-type Period = "weekly" | "monthly";
+// Mirrors the router's own input enum, so the two can't drift.
+type Period = inferRouterInputs<AppRouter>["dashboard"]["volumeByMuscleGroup"]["period"];
+
+const PERIOD_OPTIONS = [
+  { value: "weekly", label: "Weekly" },
+  { value: "monthly", label: "Monthly" },
+] as const satisfies readonly { value: Period; label: string }[];
 
 function volumeBarColor(sets: number, target: number): string {
   const ratio = sets / target;
@@ -46,11 +54,10 @@ function DashboardPage() {
           </span>
           <Select
             value={period}
-            onChange={(e) => setPeriod(e.target.value as Period)}
-            options={[
-              { value: "weekly", label: "Weekly" },
-              { value: "monthly", label: "Monthly" },
-            ]}
+            onChange={(e) =>
+              setPeriod(PERIOD_OPTIONS.find((o) => o.value === e.target.value)?.value ?? period)
+            }
+            options={[...PERIOD_OPTIONS]}
             className="w-[110px] py-1 text-caption"
           />
         </div>

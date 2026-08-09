@@ -105,7 +105,9 @@ test.describe("Exercise Library (/library)", () => {
     }
 
     // Library cards render primary muscles only (secondary muscles show on the detail page).
-    const sample = exerciseByName(EXERCISE_NAMES[0] as string);
+    const [sampleName] = EXERCISE_NAMES;
+    if (!sampleName) throw new Error("No seeded exercises to sample");
+    const sample = exerciseByName(sampleName);
     const card = page.getByRole("link", { name: cardLocatorName(sample.name) });
     await expect(card.getByText(sample.movementPattern, { exact: true })).toBeVisible();
     for (const muscle of sample.muscles.filter((m) => m.role === "primary")) {

@@ -1,5 +1,7 @@
+import type { AppRouter } from "@fitnest/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
+import type { inferRouterInputs } from "@trpc/server";
 import { useState } from "react";
 import { useTRPC } from "../integrations/trpc";
 import { Button } from "../ui/Button";
@@ -11,7 +13,23 @@ export const Route = createFileRoute("/_shell/library_/$exerciseId_/edit")({
   component: ExerciseEditPage,
 });
 
-const MOVEMENT_PATTERNS = ["push", "pull", "squat", "hinge", "lunge", "carry", "core"] as const;
+// Sourced from the router's input types, which the API derives from the Drizzle
+// enums (`z.enum(movementPattern.enumValues)`), so these unions can't drift from
+// the DB. The option lists below are checked for exhaustiveness at compile time.
+type UpdateInput = inferRouterInputs<AppRouter>["templateExercises"]["update"];
+type MovementPattern = NonNullable<UpdateInput["movementPattern"]>;
+type Equipment = NonNullable<UpdateInput["equipment"]>;
+
+const MOVEMENT_PATTERNS = [
+  "push",
+  "pull",
+  "squat",
+  "hinge",
+  "lunge",
+  "carry",
+  "core",
+] as const satisfies readonly MovementPattern[];
+
 const EQUIPMENT = [
   "barbell",
   "dumbbell",
@@ -20,7 +38,19 @@ const EQUIPMENT = [
   "bodyweight",
   "kettlebell",
   "band",
-] as const;
+  "foam-roller",
+  "medicine-ball",
+  "exercise-ball",
+  "ez-bar",
+] as const satisfies readonly Equipment[];
+
+// Compile error if the DB enum gains a member that isn't offered in the dropdowns.
+// Exported only so `noUnusedLocals` doesn't strip these guards.
+type AssertNever<T extends never> = T;
+export type AllPatternsOffered = AssertNever<
+  Exclude<MovementPattern, (typeof MOVEMENT_PATTERNS)[number]>
+>;
+export type AllEquipmentOffered = AssertNever<Exclude<Equipment, (typeof EQUIPMENT)[number]>>;
 
 function ExerciseEditPage() {
   const { exerciseId } = Route.useParams();
@@ -31,8 +61,8 @@ function ExerciseEditPage() {
   const exerciseQuery = useQuery(trpc.templateExercises.byId.queryOptions({ id: exerciseId }));
 
   const [name, setName] = useState<string | null>(null);
-  const [movementPattern, setMovementPattern] = useState<string | null>(null);
-  const [equipment, setEquipment] = useState<string | null>(null);
+  const [movementPattern, setMovementPattern] = useState<MovementPattern | null>(null);
+  const [equipment, setEquipment] = useState<Equipment | "" | null>(null);
   const [note, setNote] = useState<string | null>(null);
 
   const updateMutation = useMutation(
@@ -64,8 +94,8 @@ function ExerciseEditPage() {
     updateMutation.mutate({
       id: exerciseId,
       name: currentName,
-      movementPattern: currentPattern as (typeof MOVEMENT_PATTERNS)[number],
-      equipment: currentEquipment ? (currentEquipment as (typeof EQUIPMENT)[number]) : null,
+      movementPattern: currentPattern,
+      equipment: currentEquipment || null,
       note: currentNote || null,
     });
   }
@@ -86,7 +116,11 @@ function ExerciseEditPage() {
             </div>
             <Select
               value={currentPattern}
-              onChange={(e) => setMovementPattern(e.target.value)}
+              onChange={(e) =>
+                setMovementPattern(
+                  MOVEMENT_PATTERNS.find((p) => p === e.target.value) ?? currentPattern,
+                )
+              }
               options={MOVEMENT_PATTERNS.map((p) => ({ value: p, label: p }))}
             />
           </div>
@@ -94,7 +128,7 @@ function ExerciseEditPage() {
             <div className="mb-1.5 text-caption text-muted uppercase tracking-wide">Equipment</div>
             <Select
               value={currentEquipment}
-              onChange={(e) => setEquipment(e.target.value)}
+              onChange={(e) => setEquipment(EQUIPMENT.find((eq) => eq === e.target.value) ?? "")}
               options={[
                 { value: "", label: "None" },
                 ...EQUIPMENT.map((eq) => ({ value: eq, label: eq })),

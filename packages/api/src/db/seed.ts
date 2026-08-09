@@ -59,7 +59,7 @@ async function seed() {
     await db.insert(templateExerciseMuscles).values(
       ex.muscles.map((m) => ({
         templateExerciseId: row.id,
-        muscleGroup: m.muscleGroup as (typeof templateExerciseMuscles.$inferInsert)["muscleGroup"],
+        muscleGroup: m.muscleGroup,
         role: m.role,
       })),
     );
