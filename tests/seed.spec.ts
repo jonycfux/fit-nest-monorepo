@@ -11,6 +11,11 @@ import type { SeedExercise } from "../packages/api/src/db/seed-data/types.js";
 // the web-app. Requires: Postgres migrated + seeded, API running with
 // DEV_AUTH_BYPASS=true (see README for setup steps).
 //
+// Runs as the fixed dev user: the `seed-*` Playwright projects load
+// tests/.auth/dev-user.json, whose `fitnest_dev_user` cookie opts each request
+// into the dev bypass (ADR 0009). Without that cookie these navigations would be
+// redirected to /sign-in. The auth flow itself is covered by auth.spec.ts.
+//
 // Everything asserted here is derived from the seed definitions themselves, so
 // changing the seeded exercises/workouts doesn't require editing this file.
 
