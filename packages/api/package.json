@@ -12,7 +12,8 @@
     }
   },
   "scripts": {
-    "dev": "tsx watch --env-file=.env src/server.ts",
+    "dev": "tsx watch --env-file-if-exists=.env src/server.ts",
+    "serve": "tsx --env-file-if-exists=.env src/server.ts",
     "build": "tsc --project tsconfig.json",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
@@ -20,7 +21,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "tsx --env-file=.env src/db/seed.ts"
+    "db:seed": "tsx --env-file-if-exists=.env src/db/seed.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.11",

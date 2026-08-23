@@ -70,10 +70,21 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    command: "npm run dev -w @fitnest/web-app",
-    url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
-  },
+  /* Boot both servers the seed tests need. The API is started with
+   * DEV_AUTH_BYPASS so every request resolves to the seeded dev user (there is
+   * no frontend login yet) — the DB it points at must already be migrated and
+   * seeded. Locally, an API/web server you started yourself is reused. */
+  webServer: [
+    {
+      command: "npm run serve -w @fitnest/api",
+      url: "http://localhost:4000/",
+      reuseExistingServer: !process.env.CI,
+      env: { DEV_AUTH_BYPASS: "true" },
+    },
+    {
+      command: "npm run dev -w @fitnest/web-app",
+      url: "http://localhost:3000",
+      reuseExistingServer: !process.env.CI,
+    },
+  ],
 });
