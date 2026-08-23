@@ -1,0 +1,15 @@
+{
+  "cookies": [
+    {
+      "name": "fitnest_dev_user",
+      "value": "1",
+      "domain": "localhost",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}

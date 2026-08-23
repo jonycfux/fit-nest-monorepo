@@ -1,21 +1,27 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { defineConfig, devices } from "@playwright/test";
+import dotenv from "dotenv";
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Clerk keys and DATABASE_URL live in the per-package env files. The auth suite
+// needs them in the Playwright process itself (to mint testing tokens and to
+// clean up the accounts it creates), not just in the servers it boots.
+dotenv.config({ path: path.resolve(__dirname, "packages/api/.env"), quiet: true });
+dotenv.config({ path: path.resolve(__dirname, "packages/web-app/.env"), quiet: true });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
   testDir: "./tests",
-  /* Per-test budget. These are fast seed-rendering checks, so a broken server
-   * should surface in seconds rather than burning the 30s default on every
-   * attempt. */
+  /* Mints the Clerk testing token the auth suite needs. No-ops when the auth
+   * project isn't selected, so seed-only runs need no Clerk credentials. */
+  globalSetup: "./tests/support/clerk-global-setup.ts",
+  /* Per-test budget. The seed checks are fast renders, but the auth suite talks
+   * to Clerk and pays for the just-in-time seed of a ~156-exercise library on
+   * the first request after sign-up, so it gets a much longer budget below. */
   timeout: 8_000,
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -36,48 +42,45 @@ export default defineConfig({
     trace: "on-first-retry",
   },
 
-  /* Configure projects for major browsers */
   projects: [
+    /* Seed rendering checks. These run as the fixed dev user, opted in via the
+     * dev cookie in the storage state below — the API grants it only because
+     * the server runs with DEV_AUTH_BYPASS. Browser coverage lives here because
+     * these are the pure-rendering assertions. */
+    ...["chromium", "firefox", "webkit"].map((browser) => ({
+      name: `seed-${browser}`,
+      testMatch: /seed\.spec\.ts/,
+      use: {
+        ...devices[
+          browser === "chromium"
+            ? "Desktop Chrome"
+            : browser === "firefox"
+              ? "Desktop Firefox"
+              : "Desktop Safari"
+        ],
+        storageState: "tests/.auth/dev-user.json",
+      },
+    })),
+
+    /* Real Clerk register/login flow. No dev cookie, so these exercise genuine
+     * sign-up, session creation, and just-in-time provisioning. Chromium only:
+     * each run creates and deletes a real Clerk account, so running it three
+     * times over adds cost and flake without testing anything browser-specific.
+     * Serial, because the login test signs in as the account the register test
+     * creates. */
     {
-      name: "chromium",
+      name: "auth",
+      testMatch: /auth\.spec\.ts/,
       use: { ...devices["Desktop Chrome"] },
+      timeout: 60_000,
     },
-
-    {
-      name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
-    },
-
-    {
-      name: "webkit",
-      use: { ...devices["Desktop Safari"] },
-    },
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
   ],
 
-  /* Boot both servers the seed tests need. The API is started with
-   * DEV_AUTH_BYPASS so every request resolves to the seeded dev user (there is
-   * no frontend login yet) — the DB it points at must already be migrated and
-   * seeded. Locally, an API/web server you started yourself is reused. */
+  /* Boot both servers. DEV_AUTH_BYPASS grants the *capability* to resolve to the
+   * seeded dev user; a request only claims it by carrying the dev cookie/header,
+   * so the auth suite still sees a genuinely signed-out visitor on the same
+   * server (ADR 0009). The DB it points at must already be migrated and seeded.
+   * Locally, an API/web server you started yourself is reused. */
   webServer: [
     {
       command: "npm run serve -w @fitnest/api",

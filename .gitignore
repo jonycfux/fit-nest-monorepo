@@ -17,6 +17,9 @@ out/
 .env.*
 !.env.example
 
+# Clerk keyless mode writes auto-provisioned dev keys here — real secrets.
+.clerk/
+
 # Local Claude Code settings (personal/local — not for shared repos)
 .claude/settings.local.json
 

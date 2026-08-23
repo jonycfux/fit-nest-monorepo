@@ -1,6 +1,16 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "globalDependencies": ["tsconfig.base.json", "biome.json"],
+  "globalEnv": [
+    "DATABASE_URL",
+    "PORT",
+    "CORS_ORIGIN",
+    "DEV_AUTH_BYPASS",
+    "CLERK_SECRET_KEY",
+    "VITE_CLERK_PUBLISHABLE_KEY",
+    "VITE_API_URL",
+    "CI"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

@@ -6,6 +6,20 @@ The domain language for Fitnest — a fitness app where users build training pla
 
 Two sides mirror each other: **planning** (the prescription — what you intend to do) and **performance** (what you actually did). They are recorded independently; a Logged Workout does not retain the prescription it came from (see Logged Workout).
 
+### Identity
+
+**User**:
+The owner of everything. Every Plan, Workout, Template Exercise and Logged Workout belongs to exactly one User, and nothing is shared across Users ([ADR 0002](docs/adr/0002-per-user-ownership-no-cross-user-sharing.md)). The term names **two halves that are deliberately separate**: an *account* at Clerk (email, password, session — Clerk is the identity provider) and a *`users` row* in Postgres (the ownership anchor every other table points at). They are joined by **`clerkUserId`**, and only that column knows about Clerk; the rest of the domain refers to the local row's id. A User's local row is created the first time they make an authenticated request, not when they register — see Provisioning. See [ADR 0009](docs/adr/0009-clerk-identity-jit-provisioning.md).
+_Avoid_: Account, member, athlete; treating the Clerk id as the User's identity in domain code.
+
+**Provisioning**:
+Creating a User's local row and its starting data, on their first authenticated request after registering ("just-in-time"). Distinct from **registration**, which happens entirely at Clerk. Provisioning is idempotent — concurrent first requests resolve to one row — and it is the only moment Seeding happens for a real User.
+_Avoid_: Signup (that's Clerk's half), onboarding (a UI flow, not this).
+
+**Seeding**:
+Giving a newly provisioned User their starting **Template Exercise library** — a copy of the classic exercises, with muscle tags and backup links. That is *all* a real User is seeded with. The demo Plan ("PPL 6-Week Hypertrophy") and its back-dated Logged Workouts are **dev fixtures**, given only to the seeded dev user by the `db:seed` script; fabricating them for a real User would report set volume for training they never did.
+_Avoid_: Calling the dev fixture "the seed data" without qualification — say *the exercise library* or *the demo plan*.
+
 ### Planning (the prescription — what you intend to do)
 
 **Plan**:
@@ -17,7 +31,7 @@ A named, reusable grouping of exercises intended to be done in one sitting, e.g.
 _Avoid_: Day, session (a Logged Workout is a performed instance — see below), routine.
 
 **Template Exercise**:
-A movement definition, e.g. "Bench Press", owned by a single User and reusable across that user's Workouts. Each user has their own library; there is no single canonical Template Exercise shared across users. New users are seeded with a copy of the classic exercises. A Template Exercise with logged history is never hard-deleted — it is **Archived** (hidden from pickers, still resolvable by past Logged Workouts). A rename propagates to all history, since it is the same movement.
+A movement definition, e.g. "Bench Press", owned by a single User and reusable across that user's Workouts. Each user has their own library; there is no single canonical Template Exercise shared across users. New users are seeded with a copy of the classic exercises (see Seeding). A Template Exercise with logged history is never hard-deleted — it is **Archived** (hidden from pickers, still resolvable by past Logged Workouts). A rename propagates to all history, since it is the same movement.
 _Avoid_: Exercise (ambiguous — say Template / Prescribed / Logged Exercise), movement; "global/shared catalog" (the library is per-user, not shared across users).
 
 **Variant** _(Template Exercise)_:

@@ -30,6 +30,11 @@ jobs:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/fitnest
       CORS_ORIGIN: http://localhost:3000
       DEV_AUTH_BYPASS: "true"
+      # The auth suite registers a real (throwaway) account against a Clerk dev
+      # instance, so it needs credentials. Add these as repository secrets to
+      # enable it — the run below falls back to the seed suite when they're absent.
+      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+      VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
 
     steps:
     - uses: actions/checkout@v4
@@ -51,7 +56,13 @@ jobs:
     - name: Seed database
       run: npm run db:seed -w @fitnest/api
     - name: Run Playwright tests
-      run: npx playwright test
+      run: |
+        if [ -n "$CLERK_SECRET_KEY" ] && [ -n "$VITE_CLERK_PUBLISHABLE_KEY" ]; then
+          npx playwright test
+        else
+          echo "::warning::Clerk secrets not configured — skipping the auth suite."
+          npx playwright test --project=seed-chromium --project=seed-firefox --project=seed-webkit
+        fi
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
