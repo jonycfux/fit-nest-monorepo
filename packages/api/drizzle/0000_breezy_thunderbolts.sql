@@ -1,4 +1,4 @@
-CREATE TYPE "public"."equipment" AS ENUM('barbell', 'dumbbell', 'cable', 'machine', 'bodyweight', 'kettlebell', 'band');--> statement-breakpoint
+CREATE TYPE "public"."equipment" AS ENUM('barbell', 'dumbbell', 'cable', 'machine', 'bodyweight', 'kettlebell', 'band', 'foam-roller', 'medicine-ball', 'exercise-ball', 'ez-bar');--> statement-breakpoint
 CREATE TYPE "public"."movement_pattern" AS ENUM('push', 'pull', 'squat', 'hinge', 'lunge', 'carry', 'core');--> statement-breakpoint
 CREATE TYPE "public"."muscle_group" AS ENUM('chest', 'back', 'quads', 'hamstrings', 'glutes', 'delts', 'biceps', 'triceps', 'calves', 'core', 'forearms', 'traps');--> statement-breakpoint
 CREATE TYPE "public"."muscle_role" AS ENUM('primary', 'secondary');--> statement-breakpoint

@@ -1,5 +1,5 @@
 {
-  "id": "a2aa3d6c-afe8-450a-a223-fbd23fde59f6",
+  "id": "37816e00-d0ec-48dc-9434-07c4c24c2d7b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -803,7 +803,11 @@
         "machine",
         "bodyweight",
         "kettlebell",
-        "band"
+        "band",
+        "foam-roller",
+        "medicine-ball",
+        "exercise-ball",
+        "ez-bar"
       ]
     },
     "public.movement_pattern": {
