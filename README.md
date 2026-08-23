@@ -25,6 +25,34 @@ fitnest-monorepo/
 
 ## Getting started
 
+### Clerk setup (required before the app will run)
+
+Authentication is Clerk, email/password only. Some of this configuration lives in the
+Clerk dashboard and **cannot be committed**, so a fresh clone or a new Clerk instance
+must apply it by hand. See [ADR 0009](docs/adr/0009-clerk-identity-jit-provisioning.md).
+
+1. Create an application at [dashboard.clerk.com](https://dashboard.clerk.com).
+2. **Configure → Email, phone, username:**
+   - Enable **Email address** as an identifier, and enable **Password**.
+   - Turn **off** email verification ("Verify at sign-up"). The app has no
+     verification step, so leaving this on makes sign-up hang after submit.
+3. **Configure → SSO connections:** disable every OAuth provider. None are wired up.
+4. **Configure → API keys:** copy the keys into your env files:
+
+```bash
+# packages/api/.env
+CLERK_SECRET_KEY=sk_test_...
+
+# packages/web-app/.env
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+```
+
+If the instance drifts from this configuration, the sign-in/sign-up forms report an
+explicit `needs an extra step (<status>)` error rather than failing silently.
+
+### Running
+
 ```bash
 npm install
 
@@ -50,17 +78,36 @@ npm run format      # biome format --write .
 
 ### End-to-end tests (Playwright)
 
-`tests/seed.spec.ts` verifies the data from `packages/api/src/db/seed.ts` renders correctly in the web-app. It needs a migrated + seeded database; Playwright boots both servers itself (with `DEV_AUTH_BYPASS` set on the API), reusing any you already have running locally:
+Two suites, described in [`specs/`](specs/) and sharing one pair of servers that Playwright boots itself (reusing any you already have running locally):
+
+| Project | Spec | What it covers |
+| --- | --- | --- |
+| `seed-{chromium,firefox,webkit}` | `tests/seed.spec.ts` | The dev fixture data from `db/seed.ts` renders correctly ([plan](specs/seed.plan.md)) |
+| `auth` | `tests/auth.spec.ts` | Real Clerk register → provision → sign out → sign in ([plan](specs/auth.plan.md)) |
 
 ```bash
 npm run db:migrate -w @fitnest/api
 npm run db:seed -w @fitnest/api    # idempotent, safe to re-run
 npx playwright test
+
+npx playwright test --project=auth            # auth only
+npx playwright test --project=seed-chromium   # seed only; needs no Clerk keys
 ```
 
-The same flow runs in CI against a Postgres service container — see [`.github/workflows/playwright.yml`](.github/workflows/playwright.yml).
+**How the two coexist.** The API runs with `DEV_AUTH_BYPASS=true`, but that flag only
+grants the *capability* to resolve to the seeded `dev@fitnest.local` user — a request
+claims it by carrying the `fitnest_dev_user` cookie. The seed project ships that cookie
+in `tests/.auth/dev-user.json`; the auth project never sets it, so it sees a genuinely
+signed-out visitor. That's what lets both run against one server, which Playwright's
+global `webServer` requires.
 
-There's no frontend login yet — with `DEV_AUTH_BYPASS=true` on the API, every request is treated as the seeded `dev@fitnest.local` user automatically.
+**The auth suite talks to a real Clerk instance.** It needs `CLERK_SECRET_KEY` and
+`VITE_CLERK_PUBLISHABLE_KEY` readable from the env files above, registers one
+throwaway `+clerk_test` account per run, and deletes it from both Clerk and Postgres
+in teardown. Its first assertion after sign-up has a long timeout because just-in-time
+provisioning seeds the exercise library inline on that request.
+
+The same flow runs in CI against a Postgres service container — see [`.github/workflows/playwright.yml`](.github/workflows/playwright.yml).
 
 ---
 
@@ -114,6 +161,17 @@ A log of the major **locked-in** architectural decisions, with rationale and not
   - [ADR 0004](docs/adr/0004-exercise-variants-detached-clone-with-breadcrumb.md) — exercise **variants** are detached clones that record an immutable `variantOf` breadcrumb, with no family behavior (yet).
 - **Status / next continuation:** this is **design + docs only** — `packages/api/src/db/schema.ts` still holds just the placeholder `users` + `fitnessPlans` tables. **Next step:** translate `CONTEXT.md` (core nouns + the six attribute fields + the variant lineage) into Drizzle tables and migrations, then replace the placeholder `publicProcedure` handlers with per-user-scoped ones once identity/auth lands.
 - **Open design item (parked):** user-defined **named backup collections** per Template Exercise — the flat backup model is kept additive-compatible for it (see the `Backup Exercise` entry in `CONTEXT.md`).
+
+### 2026-08-23
+
+#### Authentication → **Clerk** (email/password), identity split from ownership
+- **Decision:** Clerk owns identity (credentials, sessions); the `users` table stays the ownership anchor for every per-user table, joined by a new `clerkUserId` column. See [ADR 0009](docs/adr/0009-clerk-identity-jit-provisioning.md).
+- **Two integrations, not one:** the Clerk TanStack Start quickstart covers the frontend only. Because `@fitnest/api` is a **standalone server on a different origin**, it verifies session tokens itself with `@clerk/backend` — the web app sends `Authorization: Bearer <jwt>`. This also works unchanged for Expo later.
+- **Just-in-time provisioning:** a user's local row is created and seeded on their first authenticated request, not by a `user.created` webhook. No tunnel needed in dev or CI, and no race between the sign-up redirect and webhook delivery. _Consequence:_ the first request after sign-up pays for the exercise-library insert inline.
+- **Seeding split:** real registrants get the **exercise library only**; the demo PPL plan and its six back-dated sessions stay dev fixtures (fabricating them would report set volume for training the user never did).
+- **Schema:** the four FKs into `users` now `ON DELETE CASCADE` (making account deletion and test teardown one statement), and `fitness_plans.user_id` tightened to `NOT NULL` — completing the migration its own placeholder comment described.
+- **Scope:** web only. `mobile-app` has no navigation or screens to gate yet.
+- **Alternatives considered:** Clerk session cookie + `authenticateRequest` (needs cross-origin credentials + satellite config, and doesn't work for React Native); proxying tRPC through the web app's Nitro server (reintroduces the coupling the standalone API avoids); webhook-driven provisioning (needs a public URL, and races the browser).
 
 ---
 
