@@ -71,8 +71,15 @@ export const equipment = pgEnum("equipment", [
 // ---------------------------------------------------------------------------
 // Identity
 // ---------------------------------------------------------------------------
+// Clerk owns identity (credentials, sessions); this row owns *ownership* — it is
+// the FK target every per-user table points at (ADR 0009). `clerkUserId` is the
+// join between the two: the `sub` claim of a verified session token. The uuid PK
+// stays the internal identifier so the domain model never depends on Clerk's id
+// format. The seeded dev user gets a sentinel value (see db/seed.ts) because it
+// has no Clerk account.
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
+  clerkUserId: text("clerk_user_id").notNull().unique(),
   email: text("email").notNull().unique(),
   name: text("name").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -87,7 +94,7 @@ export const templateExercises = pgTable("template_exercises", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id")
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   // Intrinsic movement attributes (ADR 0003).
   movementPattern: movementPattern("movement_pattern").notNull(),
@@ -141,12 +148,12 @@ export const backupExercises = pgTable(
 // user authors once and reuses; edits propagate (ADR 0001).
 // ---------------------------------------------------------------------------
 
-// `Plan` (the noun). Pre-existing table, left as the ADR-0002-sanctioned
-// placeholder: user_id stays nullable until identity/auth lands, at which point
-// it tightens to NOT NULL alongside the public → per-user handlers.
+// `Plan` (the noun). Owned by exactly one user (ADR 0002).
 export const fitnessPlans = pgTable("fitness_plans", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").references(() => users.id),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   durationWeeks: integer("duration_weeks").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -157,7 +164,7 @@ export const workouts = pgTable("workouts", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id")
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
@@ -215,7 +222,7 @@ export const loggedWorkouts = pgTable("logged_workouts", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id")
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: "cascade" }),
   workoutId: uuid("workout_id").references(() => workouts.id, {
     onDelete: "set null",
   }),
