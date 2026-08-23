@@ -41,6 +41,11 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+    # @fitnest/shared resolves via ./dist (gitignored), so a fresh checkout has
+    # no entry point for Vite to resolve — the web-app's SSR render fails on
+    # every route until the workspace packages are built.
+    - name: Build workspace packages
+      run: npm run build
     - name: Migrate database
       run: npm run db:migrate -w @fitnest/api
     - name: Seed database
