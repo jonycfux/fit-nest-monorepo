@@ -1,8 +1,20 @@
+import { useClerk } from "@clerk/tanstack-react-start";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 import { Dumbbell, Flame, LayoutDashboard, LogOut, ShoppingCart } from "lucide-react";
 import { useTRPC } from "../integrations/trpc";
+
+/** Shared by the nav links and the log-out button, which is an action, not a link. */
+function navItemClasses({ active, disabled }: { active?: boolean; disabled?: boolean }) {
+  return `flex items-center gap-2.5 rounded-md px-3 py-2 font-condensed text-body-sm uppercase tracking-wide transition-colors duration-fast ${
+    active
+      ? "bg-surface-raised text-accent-secondary"
+      : disabled
+        ? "cursor-not-allowed text-disabled"
+        : "text-muted hover:text-primary"
+  }`;
+}
 
 function NavLink({
   to,
@@ -17,13 +29,7 @@ function NavLink({
   active: boolean;
   disabled?: boolean;
 }) {
-  const classes = `flex items-center gap-2.5 rounded-md px-3 py-2 font-condensed text-body-sm uppercase tracking-wide transition-colors duration-fast ${
-    active
-      ? "bg-surface-raised text-accent-secondary"
-      : disabled
-        ? "cursor-not-allowed text-disabled"
-        : "text-muted hover:text-primary"
-  }`;
+  const classes = navItemClasses({ active, disabled });
 
   if (disabled) {
     return (
@@ -87,7 +93,29 @@ export function Sidebar() {
           />
         </nav>
       </div>
-      <NavLink to="#" icon={LogOut} label="Log out" active={false} disabled />
+      <LogOutButton />
     </div>
+  );
+}
+
+function LogOutButton() {
+  const { signOut } = useClerk();
+  const navigate = useNavigate();
+
+  return (
+    <button
+      type="button"
+      className={navItemClasses({})}
+      data-testid="log-out"
+      onClick={async () => {
+        // Clear Clerk's session first, then navigate — going the other way would
+        // let _shell's guard re-run while the session is still live.
+        await signOut();
+        await navigate({ to: "/sign-in" });
+      }}
+    >
+      <LogOut size={16} strokeWidth={1.75} />
+      Log out
+    </button>
   );
 }

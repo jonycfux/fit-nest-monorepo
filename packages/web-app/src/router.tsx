@@ -1,3 +1,4 @@
+import { getToken } from "@clerk/tanstack-react-start";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
@@ -6,7 +7,13 @@ import { routeTree } from "./routeTree.gen";
 
 export function getRouter() {
   const queryClient = new QueryClient();
-  const trpcClient = makeTRPCClient();
+  // Clerk's `getToken` waits for Clerk to initialize and throws outside the
+  // browser. No route has a loader — all tRPC calls happen in components via
+  // useQuery — so this never runs during SSR, but the guard keeps that
+  // assumption from failing silently if a loader is added later.
+  const trpcClient = makeTRPCClient(async () =>
+    typeof window === "undefined" ? null : await getToken(),
+  );
 
   const router = createTanStackRouter({
     routeTree,
