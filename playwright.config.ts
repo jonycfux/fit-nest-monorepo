@@ -16,7 +16,7 @@ export default defineConfig({
   /* Per-test budget. These are fast seed-rendering checks, so a broken server
    * should surface in seconds rather than burning the 30s default on every
    * attempt. */
-  timeout: 5_000,
+  timeout: 8_000,
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

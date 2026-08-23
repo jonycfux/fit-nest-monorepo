@@ -1,8 +1,21 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "files": [],
-  "references": [
-    { "path": "./packages/shared" },
-    { "path": "./packages/api" }
-  ]
+  // Covers the root-level Playwright config and specs, which sit outside every
+  // package. This has to live in `tsconfig.json` rather than a side config:
+  // editors only auto-discover that exact filename, so anything else leaves
+  // these files in an inferred project with no `types: ["node"]` — hence
+  // "Cannot find name 'process'" in the editor while the CLI passed.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false
+  },
+  // No `references` here: the specs import api's *source* directly
+  // (../packages/api/src/db/seed-data/*.js), which collides with redirecting
+  // those imports to a referenced composite project's declaration output
+  // (TS6306). Nothing runs `tsc --build` from the root — each package is built
+  // by turbo via its own tsconfig — so the references bought nothing.
+  "include": ["playwright.config.ts", "tests/**/*.ts"]
 }
