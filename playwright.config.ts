@@ -89,7 +89,16 @@ export default defineConfig({
       env: { DEV_AUTH_BYPASS: "true" },
     },
     {
-      command: "npm run dev -w @fitnest/web-app",
+      /* CI serves the built output rather than `vite dev`. On a cold runner the
+       * dev server's dep optimizer re-bundles mid-run when it discovers a lazy
+       * dependency, which invalidates `node_modules/.vite/deps` and 404s the
+       * client modules already in flight. A page loaded across that window never
+       * hydrates, so its forms fall through to a native submit — see the
+       * hydration guard in tests/auth.spec.ts. The workflow builds before
+       * running, so `.output/` is already there. */
+      command: process.env.CI
+        ? "npm run start -w @fitnest/web-app"
+        : "npm run dev -w @fitnest/web-app",
       url: "http://localhost:3000",
       reuseExistingServer: !process.env.CI,
     },

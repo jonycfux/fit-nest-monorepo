@@ -66,6 +66,11 @@ function SignUpPage() {
         </>
       }
     >
+      {/* The fields carry no `name`: their values are React state, so nothing
+          reads them from the form — but a `name` would put them in the query
+          string if this ever submitted natively (hydration broken, JS blocked),
+          leaking the password into the URL, the history, and the server log.
+          `autoComplete` keys off `id`/`type`, so it still works. */}
       <form onSubmit={onSubmit} noValidate>
         <AuthError message={error} />
 
@@ -73,7 +78,6 @@ function SignUpPage() {
           <Input
             id="email"
             type="email"
-            name="email"
             icon={Mail}
             autoComplete="email"
             required
@@ -87,7 +91,6 @@ function SignUpPage() {
           <Input
             id="password"
             type="password"
-            name="password"
             icon={Lock}
             autoComplete="new-password"
             required

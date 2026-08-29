@@ -44,6 +44,15 @@ test.afterAll(async () => {
 });
 
 async function submitCredentials(emailValue: string, password: string) {
+  // Proof the client is live before we click. The button is disabled until Clerk
+  // loads, which can only happen after hydration — so waiting for it to enable
+  // rules out clicking a server-rendered form with no React handler behind it,
+  // which submits natively and reloads the page with the credentials in the URL.
+  // Playwright's own actionability check isn't enough: it would be satisfied by
+  // whatever the SSR markup says. Failing here names the cause; failing later on
+  // a URL assertion just looks like a 30s timeout.
+  await expect(page.getByTestId("submit")).toBeEnabled();
+
   await page.getByTestId("email").fill(emailValue);
   await page.getByTestId("password").fill(password);
   await page.getByTestId("submit").click();

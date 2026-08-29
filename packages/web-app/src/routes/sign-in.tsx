@@ -72,6 +72,7 @@ function SignInPage() {
         </>
       }
     >
+      {/* No `name` on the fields — see the note in sign-up.tsx. */}
       <form onSubmit={onSubmit} noValidate>
         <AuthError message={error} />
 
@@ -79,7 +80,6 @@ function SignInPage() {
           <Input
             id="email"
             type="email"
-            name="email"
             icon={Mail}
             autoComplete="email"
             required
@@ -93,7 +93,6 @@ function SignInPage() {
           <Input
             id="password"
             type="password"
-            name="password"
             icon={Lock}
             autoComplete="current-password"
             required
