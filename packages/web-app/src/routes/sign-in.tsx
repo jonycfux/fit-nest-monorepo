@@ -1,7 +1,7 @@
 import { useSignIn } from "@clerk/tanstack-react-start";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Lock, Mail } from "lucide-react";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useRef, useState } from "react";
 import { AuthCard, AuthError, AuthField, AuthSwitchLink } from "../auth/AuthCard";
 import { clerkErrorMessage } from "../auth/clerkError";
 import { Button } from "../ui/Button";
@@ -32,6 +32,12 @@ function SignInPage() {
 
   const busy = fetchStatus === "fetching";
 
+  // See the note in sign-up.tsx: the signals API replaces the resource object
+  // rather than mutating it, so the one captured by the submit handler's
+  // closure is stale by the time the call resolves.
+  const latestSignIn = useRef(signIn);
+  latestSignIn.current = signIn;
+
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!signIn || busy) return;
@@ -47,12 +53,13 @@ function SignInPage() {
     }
 
     // Password is the only enabled strategy and there's no MFA, so valid
-    // credentials complete in one step.
-    if (signIn.status !== "complete") {
-      setError(`Sign-in needs an extra step (${signIn.status}) that this app doesn't handle yet.`);
-      return;
-    }
-
+    // credentials complete in one step and finalize() turns it into the active
+    // session.
+    //
+    // finalize() is also what reports a drifted instance. Do NOT precheck
+    // `signIn.status` here: the signals API replaces the resource object rather
+    // than mutating it, so the one captured at render time is still the
+    // pre-call value. Only the awaited `{ error }` is authoritative.
     const { error: finalizeError } = await signIn.finalize();
     if (finalizeError) {
       setError(clerkErrorMessage(finalizeError));
