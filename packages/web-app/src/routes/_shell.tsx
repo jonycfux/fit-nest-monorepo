@@ -12,10 +12,15 @@ const DEV_USER_COOKIE = "fitnest_dev_user";
  * before any protected markup is rendered or any query fires.
  */
 const fetchAuthState = createServerFn({ method: "GET" }).handler(async () => {
-  // Mirrors the API's per-request dev bypass (ADR 0009): the seed Playwright
-  // suite sets this cookie and asserts against the fixture user, while the auth
-  // suite never sets it and so sees a genuinely signed-out visitor.
-  if (import.meta.env.DEV && getCookie(DEV_USER_COOKIE) === "1") {
+  // Mirrors the API's per-request dev bypass (ADR 0009), down to the env flag:
+  // DEV_AUTH_BYPASS grants the capability, and a request claims it by carrying
+  // this cookie. The seed Playwright suite sets it and asserts against the
+  // fixture user; the auth suite never sets it and so sees a genuinely
+  // signed-out visitor. Read from process.env at request time rather than
+  // `import.meta.env.DEV`, which Vite folds to false at build time and so
+  // cannot be honoured by the compiled server the e2e suite now runs against.
+  // Never set this in a real deploy config.
+  if (process.env.DEV_AUTH_BYPASS === "true" && getCookie(DEV_USER_COOKIE) === "1") {
     return { userId: "dev-bypass" };
   }
 

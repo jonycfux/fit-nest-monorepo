@@ -55,6 +55,8 @@ jobs:
       run: npm run db:migrate -w @fitnest/api
     - name: Seed database
       run: npm run db:seed -w @fitnest/api
+    # The Playwright webServers boot the compiled output from the build step
+    # above, so the suite runs against the same artifacts a deploy ships.
     - name: Run Playwright tests
       run: |
         if [ -n "$CLERK_SECRET_KEY" ] && [ -n "$VITE_CLERK_PUBLISHABLE_KEY" ]; then

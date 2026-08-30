@@ -76,31 +76,42 @@ export default defineConfig({
     },
   ],
 
-  /* Boot both servers. DEV_AUTH_BYPASS grants the *capability* to resolve to the
-   * seeded dev user; a request only claims it by carrying the dev cookie/header,
-   * so the auth suite still sees a genuinely signed-out visitor on the same
-   * server (ADR 0009). The DB it points at must already be migrated and seeded.
-   * Locally, an API/web server you started yourself is reused. */
+  /* Boot both servers from their compiled output — the same artifacts a deploy
+   * ships (`node dist/server.js` for the API, the Nitro build for the web app),
+   * so the suite exercises what actually ships rather than Vite's dev server
+   * and its on-demand transforms, HMR client, and devtools.
+   *
+   * That also removes the flake this branch exists for: on a cold runner the
+   * dev server's dep optimizer re-bundles mid-run when it discovers a lazy
+   * dependency, which invalidates `node_modules/.vite/deps` and 404s the client
+   * modules already in flight. A page loaded across that window never hydrates,
+   * so its forms fall through to a native submit — see the hydration guard in
+   * tests/auth.spec.ts, which now fails by name instead of as a URL timeout.
+   *
+   * Both `start` scripts read the package's own .env; the vars below take
+   * precedence, since Node's --env-file never overwrites an inherited variable.
+   *
+   * DEV_AUTH_BYPASS grants the *capability* to resolve to the seeded dev user;
+   * a request only claims it by carrying the dev cookie/header, so the auth
+   * suite still sees a genuinely signed-out visitor on the same server
+   * (ADR 0009). The DB it points at must already be migrated and seeded.
+   *
+   * These serve a build, not the working tree, so run `npm run test:e2e` (which
+   * builds first) rather than `npx playwright test` on its own. No existing
+   * server is reused: a dev server you happened to leave on the port would
+   * defeat the point of testing the build. */
   webServer: [
     {
-      command: "npm run serve -w @fitnest/api",
+      command: "npm start -w @fitnest/api",
       url: "http://localhost:4000/",
-      reuseExistingServer: !process.env.CI,
-      env: { DEV_AUTH_BYPASS: "true" },
+      reuseExistingServer: false,
+      env: { DEV_AUTH_BYPASS: "true", PORT: "4000" },
     },
     {
-      /* CI serves the built output rather than `vite dev`. On a cold runner the
-       * dev server's dep optimizer re-bundles mid-run when it discovers a lazy
-       * dependency, which invalidates `node_modules/.vite/deps` and 404s the
-       * client modules already in flight. A page loaded across that window never
-       * hydrates, so its forms fall through to a native submit — see the
-       * hydration guard in tests/auth.spec.ts. The workflow builds before
-       * running, so `.output/` is already there. */
-      command: process.env.CI
-        ? "npm run start -w @fitnest/web-app"
-        : "npm run dev -w @fitnest/web-app",
+      command: "npm start -w @fitnest/web-app",
       url: "http://localhost:3000",
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: false,
+      env: { DEV_AUTH_BYPASS: "true", PORT: "3000" },
     },
   ],
 });

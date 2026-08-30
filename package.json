@@ -13,6 +13,7 @@
     "format": "biome format --write .",
     "lint": "biome lint .",
     "test": "turbo run test",
+    "test:e2e": "turbo run build && playwright test",
     "typecheck": "turbo run typecheck && tsc --noEmit -p tsconfig.json"
   },
   "devDependencies": {
