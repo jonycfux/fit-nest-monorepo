@@ -53,14 +53,17 @@ function SignInPage() {
     }
 
     // Password is the only enabled strategy and there's no MFA, so valid
-    // credentials complete in one step and finalize() turns it into the active
-    // session.
-    //
-    // finalize() is also what reports a drifted instance. Do NOT precheck
-    // `signIn.status` here: the signals API replaces the resource object rather
-    // than mutating it, so the one captured at render time is still the
-    // pre-call value. Only the awaited `{ error }` is authoritative.
-    const { error: finalizeError } = await signIn.finalize();
+    // credentials complete in one step. Both the status check and finalize()
+    // have to run against the object the latest render received: the captured
+    // one carries neither the completed status nor the created session, and
+    // finalizing it throws "Cannot finalize sign-in without a created session".
+    const attempted = latestSignIn.current ?? signIn;
+    if (attempted.status !== "complete") {
+      setError(`Sign-in needs an extra step (${attempted.status}) that this app doesn't handle yet.`);
+      return;
+    }
+
+    const { error: finalizeError } = await attempted.finalize();
     if (finalizeError) {
       setError(clerkErrorMessage(finalizeError));
       return;
