@@ -1,4 +1,4 @@
-import { useClerk } from "@clerk/tanstack-react-start";
+import { ClerkLoaded, ClerkLoading, useClerk } from "@clerk/tanstack-react-start";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
@@ -99,6 +99,30 @@ export function Sidebar() {
 }
 
 function LogOutButton() {
+  // clerk-js finishes loading some time *after* hydration, and until it does
+  // signOut() resolves without clearing the session: the click navigates to
+  // /sign-in while leaving the user signed in, and the next page load walks
+  // straight back into the app. ClerkLoaded/ClerkLoading close that window.
+  //
+  // useAuth().isLoaded is not the gate to use here — it is already true on the
+  // first client render, because ClerkProvider seeds it from the SSR auth state
+  // long before clerk-js itself is ready.
+  return (
+    <>
+      <ClerkLoading>
+        <button type="button" className={navItemClasses({ disabled: true })} disabled>
+          <LogOut size={16} strokeWidth={1.75} />
+          Log out
+        </button>
+      </ClerkLoading>
+      <ClerkLoaded>
+        <LoadedLogOutButton />
+      </ClerkLoaded>
+    </>
+  );
+}
+
+function LoadedLogOutButton() {
   const { signOut } = useClerk();
   const navigate = useNavigate();
 
