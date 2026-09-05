@@ -1,7 +1,7 @@
 import { useSignUp } from "@clerk/tanstack-react-start";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Lock, Mail } from "lucide-react";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useRef, useState } from "react";
 import { AuthCard, AuthError, AuthField, AuthSwitchLink } from "../auth/AuthCard";
 import { clerkErrorMessage } from "../auth/clerkError";
 import { Button } from "../ui/Button";
@@ -22,6 +22,15 @@ function SignUpPage() {
 
   const busy = fetchStatus === "fetching";
 
+  // The signals API replaces the resource object on every update instead of
+  // mutating it, so the `signUp` captured by the submit handler's closure stays
+  // frozen at its pre-call state — it still reads "missing_requirements" after
+  // Clerk has answered status:"complete", and its finalize() fails with "Cannot
+  // finalize sign-up without a created session". This ref tracks the object the
+  // latest render received, which is the one carrying the completed attempt.
+  const latestSignUp = useRef(signUp);
+  latestSignUp.current = signUp;
+
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!signUp || busy) return;
@@ -40,12 +49,13 @@ function SignUpPage() {
     // sign-up completes in this single step — there's no verification round
     // trip. If the status isn't complete, the instance config has drifted, and
     // failing loudly beats a blank screen.
-    if (signUp.status !== "complete") {
-      setError(`Sign-up needs an extra step (${signUp.status}) that this app doesn't handle yet.`);
+    const created = latestSignUp.current ?? signUp;
+    if (created.status !== "complete") {
+      setError(`Sign-up needs an extra step (${created.status}) that this app doesn't handle yet.`);
       return;
     }
 
-    const { error: finalizeError } = await signUp.finalize();
+    const { error: finalizeError } = await created.finalize();
     if (finalizeError) {
       setError(clerkErrorMessage(finalizeError));
       return;
@@ -66,6 +76,11 @@ function SignUpPage() {
         </>
       }
     >
+      {/* The fields carry no `name`: their values are React state, so nothing
+          reads them from the form — but a `name` would put them in the query
+          string if this ever submitted natively (hydration broken, JS blocked),
+          leaking the password into the URL, the history, and the server log.
+          `autoComplete` keys off `id`/`type`, so it still works. */}
       <form onSubmit={onSubmit} noValidate>
         <AuthError message={error} />
 
@@ -73,7 +88,6 @@ function SignUpPage() {
           <Input
             id="email"
             type="email"
-            name="email"
             icon={Mail}
             autoComplete="email"
             required
@@ -87,7 +101,6 @@ function SignUpPage() {
           <Input
             id="password"
             type="password"
-            name="password"
             icon={Lock}
             autoComplete="new-password"
             required

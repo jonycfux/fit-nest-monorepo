@@ -1,7 +1,7 @@
 import { useSignIn } from "@clerk/tanstack-react-start";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Lock, Mail } from "lucide-react";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useRef, useState } from "react";
 import { AuthCard, AuthError, AuthField, AuthSwitchLink } from "../auth/AuthCard";
 import { clerkErrorMessage } from "../auth/clerkError";
 import { Button } from "../ui/Button";
@@ -32,6 +32,12 @@ function SignInPage() {
 
   const busy = fetchStatus === "fetching";
 
+  // See the note in sign-up.tsx: the signals API replaces the resource object
+  // rather than mutating it, so the one captured by the submit handler's
+  // closure is stale by the time the call resolves.
+  const latestSignIn = useRef(signIn);
+  latestSignIn.current = signIn;
+
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!signIn || busy) return;
@@ -47,13 +53,17 @@ function SignInPage() {
     }
 
     // Password is the only enabled strategy and there's no MFA, so valid
-    // credentials complete in one step.
-    if (signIn.status !== "complete") {
-      setError(`Sign-in needs an extra step (${signIn.status}) that this app doesn't handle yet.`);
+    // credentials complete in one step. Both the status check and finalize()
+    // have to run against the object the latest render received: the captured
+    // one carries neither the completed status nor the created session, and
+    // finalizing it throws "Cannot finalize sign-in without a created session".
+    const attempted = latestSignIn.current ?? signIn;
+    if (attempted.status !== "complete") {
+      setError(`Sign-in needs an extra step (${attempted.status}) that this app doesn't handle yet.`);
       return;
     }
 
-    const { error: finalizeError } = await signIn.finalize();
+    const { error: finalizeError } = await attempted.finalize();
     if (finalizeError) {
       setError(clerkErrorMessage(finalizeError));
       return;
@@ -72,6 +82,7 @@ function SignInPage() {
         </>
       }
     >
+      {/* No `name` on the fields — see the note in sign-up.tsx. */}
       <form onSubmit={onSubmit} noValidate>
         <AuthError message={error} />
 
@@ -79,7 +90,6 @@ function SignInPage() {
           <Input
             id="email"
             type="email"
-            name="email"
             icon={Mail}
             autoComplete="email"
             required
@@ -93,7 +103,6 @@ function SignInPage() {
           <Input
             id="password"
             type="password"
-            name="password"
             icon={Lock}
             autoComplete="current-password"
             required

@@ -81,6 +81,13 @@ export default defineConfig({
    * so the suite exercises what actually ships rather than Vite's dev server
    * and its on-demand transforms, HMR client, and devtools.
    *
+   * That also removes the flake this branch exists for: on a cold runner the
+   * dev server's dep optimizer re-bundles mid-run when it discovers a lazy
+   * dependency, which invalidates `node_modules/.vite/deps` and 404s the client
+   * modules already in flight. A page loaded across that window never hydrates,
+   * so its forms fall through to a native submit — see the hydration guard in
+   * tests/auth.spec.ts, which now fails by name instead of as a URL timeout.
+   *
    * Both `start` scripts read the package's own .env; the vars below take
    * precedence, since Node's --env-file never overwrites an inherited variable.
    *
