@@ -1,12 +1,6 @@
-import type { SeedBackupLink, SeedPlan, SeedSession, SeedWorkout } from "./types.js";
+import type { SeedPlan, SeedSession, SeedWorkout } from "./types.js";
 
 export const SEED_PLAN: SeedPlan = { name: "PPL 6-Week Hypertrophy", durationWeeks: 6 };
-
-// A couple of backup links, just so Exercise Detail has something to show.
-export const SEED_BACKUP_LINKS: SeedBackupLink[] = [
-  { exercise: "Bench Press", backup: "Shoulder Press" },
-  { exercise: "Pullups", backup: "Lat Pulldown" },
-];
 
 export const SEED_WORKOUTS: SeedWorkout[] = [
   {

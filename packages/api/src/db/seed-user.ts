@@ -15,7 +15,8 @@ import {
   workouts,
 } from "./schema.js";
 import { SEED_EXERCISES } from "./seed-data/exercises.js";
-import { SEED_BACKUP_LINKS, SEED_PLAN, SEED_SESSIONS, SEED_WORKOUTS } from "./seed-data/plan.js";
+import { SEED_BACKUP_LINKS } from "./seed-data/backup-links.js";
+import { SEED_PLAN, SEED_SESSIONS, SEED_WORKOUTS } from "./seed-data/plan.js";
 import type { SeedWorkout } from "./seed-data/types.js";
 
 /**
@@ -91,12 +92,19 @@ async function seedExerciseLibrary(tx: Tx, userId: string): Promise<Map<string, 
     defaultCollections.map((c) => [c.templateExerciseId, c.id]),
   );
 
+  // `position` is the link's rank within its exercise, so the order the backup
+  // list was computed in is the order the picker offers them in.
+  const positionByExercise = new Map<string, number>();
   await tx.insert(backupExercises).values(
-    SEED_BACKUP_LINKS.map((link) => ({
-      collectionId: mustGet(collectionByExerciseId, mustGet(exerciseIds, link.exercise)),
-      backupExerciseId: mustGet(exerciseIds, link.backup),
-      position: 0,
-    })),
+    SEED_BACKUP_LINKS.map((link) => {
+      const position = positionByExercise.get(link.exercise) ?? 0;
+      positionByExercise.set(link.exercise, position + 1);
+      return {
+        collectionId: mustGet(collectionByExerciseId, mustGet(exerciseIds, link.exercise)),
+        backupExerciseId: mustGet(exerciseIds, link.backup),
+        position,
+      };
+    }),
   );
 
   return exerciseIds;
