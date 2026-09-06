@@ -1,8 +1,15 @@
-// Curated exercise library. Originally derived from free-exercise-db
-// (https://github.com/yuhonas/free-exercise-db), then condensed: grip/angle
-// variants folded into their base movement, and equipment names stripped from
-// exercise names (equipment lives in the `equipment` field instead), merging
-// any entries that collided as a result.
+// Curated exercise library, sorted by name. Originally derived from
+// free-exercise-db (https://github.com/yuhonas/free-exercise-db), then
+// condensed: grip/angle variants folded into their base movement, and equipment
+// names stripped from exercise names (equipment lives in the `equipment` field
+// instead), merging any entries that collided as a result.
+//
+// Naming rule for the collisions that could NOT be merged: where two entries are
+// the same base movement performed with a different implement, they are genuinely
+// different Template Exercises (ADR 0003), so BOTH carry their equipment as a
+// name prefix — "Barbell Deadlift" / "Cable Deadlift", not "Deadlift" /
+// "Deadlifts". The nine pluralised names that previously dodged those collisions
+// are gone; a plural name here is now always a real plural, never a disambiguator.
 import type { SeedExercise } from "./types.js";
 
 export const SEED_EXERCISES: SeedExercise[] = [
@@ -45,6 +52,82 @@ export const SEED_EXERCISES: SeedExercise[] = [
     muscles: [
       { muscleGroup: "delts", role: "primary" },
       { muscleGroup: "triceps", role: "secondary" },
+    ],
+  },
+  {
+    name: "Band Hip Adduction",
+    bodyPosition: "seated",
+    laterality: "bilateral",
+    movementPattern: "pull",
+    equipment: "band",
+    muscles: [{ muscleGroup: "glutes", role: "primary" }],
+  },
+  {
+    name: "Band Skull Crusher",
+    bodyPosition: "lying",
+    laterality: "bilateral",
+    movementPattern: "push",
+    equipment: "band",
+    muscles: [{ muscleGroup: "triceps", role: "primary" }],
+  },
+  {
+    name: "Barbell Deadlift",
+    bodyPosition: "standing",
+    laterality: "bilateral",
+    movementPattern: "hinge",
+    equipment: "barbell",
+    muscles: [
+      { muscleGroup: "back", role: "primary" },
+      { muscleGroup: "quads", role: "primary" },
+      { muscleGroup: "calves", role: "secondary" },
+      { muscleGroup: "forearms", role: "secondary" },
+      { muscleGroup: "glutes", role: "secondary" },
+      { muscleGroup: "hamstrings", role: "secondary" },
+      { muscleGroup: "traps", role: "secondary" },
+    ],
+  },
+  {
+    name: "Barbell Lunge",
+    bodyPosition: "standing",
+    laterality: "alternating",
+    movementPattern: "lunge",
+    equipment: "barbell",
+    muscles: [
+      { muscleGroup: "quads", role: "primary" },
+      { muscleGroup: "calves", role: "secondary" },
+      { muscleGroup: "glutes", role: "secondary" },
+      { muscleGroup: "hamstrings", role: "secondary" },
+    ],
+  },
+  {
+    name: "Barbell Preacher Curl",
+    bodyPosition: "seated",
+    laterality: "bilateral",
+    movementPattern: "pull",
+    equipment: "barbell",
+    muscles: [
+      { muscleGroup: "biceps", role: "primary" },
+      { muscleGroup: "forearms", role: "secondary" },
+    ],
+  },
+  {
+    name: "Barbell Seated Palms-Up Wrist Curl",
+    bodyPosition: "seated",
+    laterality: "bilateral",
+    gripOrientation: "supinated",
+    movementPattern: "pull",
+    equipment: "barbell",
+    muscles: [{ muscleGroup: "forearms", role: "primary" }],
+  },
+  {
+    name: "Barbell Shrug",
+    bodyPosition: "standing",
+    laterality: "bilateral",
+    movementPattern: "pull",
+    equipment: "barbell",
+    muscles: [
+      { muscleGroup: "traps", role: "primary" },
+      { muscleGroup: "forearms", role: "secondary" },
     ],
   },
   {
@@ -116,6 +199,17 @@ export const SEED_EXERCISES: SeedExercise[] = [
     muscles: [{ muscleGroup: "triceps", role: "primary" }],
   },
   {
+    name: "Bodyweight Russian Twist",
+    bodyPosition: "seated",
+    laterality: "bilateral",
+    movementPattern: "core",
+    equipment: "bodyweight",
+    muscles: [
+      { muscleGroup: "core", role: "primary" },
+      { muscleGroup: "back", role: "secondary" },
+    ],
+  },
+  {
     name: "Butt Lift (Bridge)",
     bodyPosition: "lying",
     laterality: "bilateral",
@@ -133,6 +227,52 @@ export const SEED_EXERCISES: SeedExercise[] = [
     movementPattern: "pull",
     equipment: "machine",
     muscles: [{ muscleGroup: "chest", role: "primary" }],
+  },
+  {
+    name: "Cable Deadlift",
+    bodyPosition: "standing",
+    laterality: "bilateral",
+    movementPattern: "hinge",
+    equipment: "cable",
+    muscles: [
+      { muscleGroup: "quads", role: "primary" },
+      { muscleGroup: "back", role: "secondary" },
+      { muscleGroup: "forearms", role: "secondary" },
+      { muscleGroup: "glutes", role: "secondary" },
+      { muscleGroup: "hamstrings", role: "secondary" },
+    ],
+  },
+  {
+    name: "Cable Hip Adduction",
+    bodyPosition: "seated",
+    laterality: "bilateral",
+    movementPattern: "pull",
+    equipment: "cable",
+    muscles: [{ muscleGroup: "quads", role: "primary" }],
+  },
+  {
+    name: "Cable Lying Triceps Extension",
+    bodyPosition: "lying",
+    laterality: "bilateral",
+    movementPattern: "push",
+    equipment: "cable",
+    muscles: [{ muscleGroup: "triceps", role: "primary" }],
+  },
+  {
+    name: "Cable Russian Twist",
+    bodyPosition: "seated",
+    laterality: "bilateral",
+    movementPattern: "core",
+    equipment: "cable",
+    muscles: [{ muscleGroup: "core", role: "primary" }],
+  },
+  {
+    name: "Cable Shrug",
+    bodyPosition: "standing",
+    laterality: "bilateral",
+    movementPattern: "pull",
+    equipment: "cable",
+    muscles: [{ muscleGroup: "traps", role: "primary" }],
   },
   {
     name: "Calf Press",
@@ -248,36 +388,6 @@ export const SEED_EXERCISES: SeedExercise[] = [
     ],
   },
   {
-    name: "Deadlift",
-    bodyPosition: "standing",
-    laterality: "bilateral",
-    movementPattern: "hinge",
-    equipment: "barbell",
-    muscles: [
-      { muscleGroup: "back", role: "primary" },
-      { muscleGroup: "quads", role: "primary" },
-      { muscleGroup: "calves", role: "secondary" },
-      { muscleGroup: "forearms", role: "secondary" },
-      { muscleGroup: "glutes", role: "secondary" },
-      { muscleGroup: "hamstrings", role: "secondary" },
-      { muscleGroup: "traps", role: "secondary" },
-    ],
-  },
-  {
-    name: "Deadlifts",
-    bodyPosition: "standing",
-    laterality: "bilateral",
-    movementPattern: "hinge",
-    equipment: "cable",
-    muscles: [
-      { muscleGroup: "quads", role: "primary" },
-      { muscleGroup: "back", role: "secondary" },
-      { muscleGroup: "forearms", role: "secondary" },
-      { muscleGroup: "glutes", role: "secondary" },
-      { muscleGroup: "hamstrings", role: "secondary" },
-    ],
-  },
-  {
     name: "Decline Crunch",
     bodyPosition: "decline",
     laterality: "bilateral",
@@ -328,6 +438,51 @@ export const SEED_EXERCISES: SeedExercise[] = [
       { muscleGroup: "glutes", role: "secondary" },
       { muscleGroup: "hamstrings", role: "secondary" },
       { muscleGroup: "quads", role: "secondary" },
+    ],
+  },
+  {
+    name: "Dumbbell Lunge",
+    bodyPosition: "standing",
+    laterality: "alternating",
+    movementPattern: "lunge",
+    equipment: "dumbbell",
+    muscles: [
+      { muscleGroup: "quads", role: "primary" },
+      { muscleGroup: "calves", role: "secondary" },
+      { muscleGroup: "glutes", role: "secondary" },
+      { muscleGroup: "hamstrings", role: "secondary" },
+    ],
+  },
+  {
+    name: "Dumbbell Lying Triceps Extension",
+    bodyPosition: "lying",
+    laterality: "bilateral",
+    movementPattern: "push",
+    equipment: "dumbbell",
+    muscles: [
+      { muscleGroup: "triceps", role: "primary" },
+      { muscleGroup: "chest", role: "secondary" },
+      { muscleGroup: "delts", role: "secondary" },
+    ],
+  },
+  {
+    name: "Dumbbell Seated Palms-Up Wrist Curl",
+    bodyPosition: "seated",
+    laterality: "bilateral",
+    gripOrientation: "supinated",
+    movementPattern: "pull",
+    equipment: "dumbbell",
+    muscles: [{ muscleGroup: "forearms", role: "primary" }],
+  },
+  {
+    name: "EZ-Bar Skull Crusher",
+    bodyPosition: "lying",
+    laterality: "bilateral",
+    movementPattern: "push",
+    equipment: "ez-bar",
+    muscles: [
+      { muscleGroup: "triceps", role: "primary" },
+      { muscleGroup: "forearms", role: "secondary" },
     ],
   },
   {
@@ -558,22 +713,6 @@ export const SEED_EXERCISES: SeedExercise[] = [
     muscles: [{ muscleGroup: "biceps", role: "primary" }],
   },
   {
-    name: "Hip Adduction",
-    bodyPosition: "seated",
-    laterality: "bilateral",
-    movementPattern: "pull",
-    equipment: "cable",
-    muscles: [{ muscleGroup: "quads", role: "primary" }],
-  },
-  {
-    name: "Hip Adductions",
-    bodyPosition: "seated",
-    laterality: "bilateral",
-    movementPattern: "pull",
-    equipment: "band",
-    muscles: [{ muscleGroup: "glutes", role: "primary" }],
-  },
-  {
     name: "Hip Thrust",
     bodyPosition: "lying",
     laterality: "bilateral",
@@ -698,32 +837,6 @@ export const SEED_EXERCISES: SeedExercise[] = [
     ],
   },
   {
-    name: "Lunge",
-    bodyPosition: "standing",
-    laterality: "alternating",
-    movementPattern: "lunge",
-    equipment: "barbell",
-    muscles: [
-      { muscleGroup: "quads", role: "primary" },
-      { muscleGroup: "calves", role: "secondary" },
-      { muscleGroup: "glutes", role: "secondary" },
-      { muscleGroup: "hamstrings", role: "secondary" },
-    ],
-  },
-  {
-    name: "Lunges",
-    bodyPosition: "standing",
-    laterality: "alternating",
-    movementPattern: "lunge",
-    equipment: "dumbbell",
-    muscles: [
-      { muscleGroup: "quads", role: "primary" },
-      { muscleGroup: "calves", role: "secondary" },
-      { muscleGroup: "glutes", role: "secondary" },
-      { muscleGroup: "hamstrings", role: "secondary" },
-    ],
-  },
-  {
     name: "Lying Leg Curls",
     bodyPosition: "lying",
     laterality: "bilateral",
@@ -751,24 +864,12 @@ export const SEED_EXERCISES: SeedExercise[] = [
     ],
   },
   {
-    name: "Lying Tricep Extension",
-    bodyPosition: "lying",
+    name: "Machine Preacher Curl",
+    bodyPosition: "seated",
     laterality: "bilateral",
-    movementPattern: "push",
-    equipment: "dumbbell",
-    muscles: [
-      { muscleGroup: "triceps", role: "primary" },
-      { muscleGroup: "chest", role: "secondary" },
-      { muscleGroup: "delts", role: "secondary" },
-    ],
-  },
-  {
-    name: "Lying Triceps Extension",
-    bodyPosition: "lying",
-    laterality: "bilateral",
-    movementPattern: "push",
-    equipment: "cable",
-    muscles: [{ muscleGroup: "triceps", role: "primary" }],
+    movementPattern: "pull",
+    equipment: "machine",
+    muscles: [{ muscleGroup: "biceps", role: "primary" }],
   },
   {
     name: "Muscle Up",
@@ -991,25 +1092,6 @@ export const SEED_EXERCISES: SeedExercise[] = [
       { muscleGroup: "traps", role: "secondary" },
       { muscleGroup: "triceps", role: "secondary" },
     ],
-  },
-  {
-    name: "Preacher Curl",
-    bodyPosition: "seated",
-    laterality: "bilateral",
-    movementPattern: "pull",
-    equipment: "barbell",
-    muscles: [
-      { muscleGroup: "biceps", role: "primary" },
-      { muscleGroup: "forearms", role: "secondary" },
-    ],
-  },
-  {
-    name: "Preacher Curls",
-    bodyPosition: "seated",
-    laterality: "bilateral",
-    movementPattern: "pull",
-    equipment: "machine",
-    muscles: [{ muscleGroup: "biceps", role: "primary" }],
   },
   {
     name: "Press Sit-Up",
@@ -1243,25 +1325,6 @@ export const SEED_EXERCISES: SeedExercise[] = [
     ],
   },
   {
-    name: "Russian Twist",
-    bodyPosition: "seated",
-    laterality: "bilateral",
-    movementPattern: "core",
-    equipment: "bodyweight",
-    muscles: [
-      { muscleGroup: "core", role: "primary" },
-      { muscleGroup: "back", role: "secondary" },
-    ],
-  },
-  {
-    name: "Russian Twists",
-    bodyPosition: "seated",
-    laterality: "bilateral",
-    movementPattern: "core",
-    equipment: "cable",
-    muscles: [{ muscleGroup: "core", role: "primary" }],
-  },
-  {
     name: "Seated Calf Raise",
     bodyPosition: "seated",
     laterality: "bilateral",
@@ -1298,24 +1361,6 @@ export const SEED_EXERCISES: SeedExercise[] = [
     muscles: [{ muscleGroup: "core", role: "primary" }],
   },
   {
-    name: "Seated Palm-Up Wrist Curl",
-    bodyPosition: "seated",
-    laterality: "bilateral",
-    gripOrientation: "supinated",
-    movementPattern: "pull",
-    equipment: "barbell",
-    muscles: [{ muscleGroup: "forearms", role: "primary" }],
-  },
-  {
-    name: "Seated Palms-Up Wrist Curl",
-    bodyPosition: "seated",
-    laterality: "bilateral",
-    gripOrientation: "supinated",
-    movementPattern: "pull",
-    equipment: "dumbbell",
-    muscles: [{ muscleGroup: "forearms", role: "primary" }],
-  },
-  {
     name: "Seated Rows",
     bodyPosition: "seated",
     laterality: "bilateral",
@@ -1338,25 +1383,6 @@ export const SEED_EXERCISES: SeedExercise[] = [
       { muscleGroup: "chest", role: "secondary" },
       { muscleGroup: "triceps", role: "secondary" },
     ],
-  },
-  {
-    name: "Shrug",
-    bodyPosition: "standing",
-    laterality: "bilateral",
-    movementPattern: "pull",
-    equipment: "barbell",
-    muscles: [
-      { muscleGroup: "traps", role: "primary" },
-      { muscleGroup: "forearms", role: "secondary" },
-    ],
-  },
-  {
-    name: "Shrugs",
-    bodyPosition: "standing",
-    laterality: "bilateral",
-    movementPattern: "pull",
-    equipment: "cable",
-    muscles: [{ muscleGroup: "traps", role: "primary" }],
   },
   {
     name: "Side Bend",
@@ -1400,25 +1426,6 @@ export const SEED_EXERCISES: SeedExercise[] = [
     movementPattern: "core",
     equipment: "bodyweight",
     muscles: [{ muscleGroup: "core", role: "primary" }],
-  },
-  {
-    name: "Skull Crusher",
-    bodyPosition: "lying",
-    laterality: "bilateral",
-    movementPattern: "push",
-    equipment: "band",
-    muscles: [{ muscleGroup: "triceps", role: "primary" }],
-  },
-  {
-    name: "Skullcrusher",
-    bodyPosition: "lying",
-    laterality: "bilateral",
-    movementPattern: "push",
-    equipment: "ez-bar",
-    muscles: [
-      { muscleGroup: "triceps", role: "primary" },
-      { muscleGroup: "forearms", role: "secondary" },
-    ],
   },
   {
     name: "Smith Single-Leg Split Squat",

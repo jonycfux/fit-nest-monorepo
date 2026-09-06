@@ -1,12 +1,26 @@
+CREATE TYPE "public"."body_position" AS ENUM('standing', 'seated', 'lying', 'incline', 'decline', 'kneeling', 'bent-over', 'hanging');--> statement-breakpoint
 CREATE TYPE "public"."equipment" AS ENUM('barbell', 'dumbbell', 'cable', 'machine', 'bodyweight', 'kettlebell', 'band', 'foam-roller', 'medicine-ball', 'exercise-ball', 'ez-bar');--> statement-breakpoint
+CREATE TYPE "public"."grip_orientation" AS ENUM('pronated', 'supinated', 'neutral', 'mixed');--> statement-breakpoint
+CREATE TYPE "public"."grip_width" AS ENUM('close', 'shoulder', 'wide');--> statement-breakpoint
+CREATE TYPE "public"."laterality" AS ENUM('bilateral', 'unilateral', 'alternating');--> statement-breakpoint
 CREATE TYPE "public"."movement_pattern" AS ENUM('push', 'pull', 'squat', 'hinge', 'lunge', 'carry', 'core');--> statement-breakpoint
 CREATE TYPE "public"."muscle_group" AS ENUM('chest', 'back', 'quads', 'hamstrings', 'glutes', 'delts', 'biceps', 'triceps', 'calves', 'core', 'forearms', 'traps');--> statement-breakpoint
 CREATE TYPE "public"."muscle_role" AS ENUM('primary', 'secondary');--> statement-breakpoint
-CREATE TABLE "backup_exercises" (
+CREATE TYPE "public"."range_of_motion" AS ENUM('full', 'partial', 'deficit', 'pin');--> statement-breakpoint
+CREATE TABLE "backup_collections" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"template_exercise_id" uuid NOT NULL,
+	"name" text,
+	"position" integer NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "backup_collections_exercise_id_uq" UNIQUE("template_exercise_id","id")
+);
+--> statement-breakpoint
+CREATE TABLE "backup_exercises" (
+	"collection_id" uuid NOT NULL,
 	"backup_exercise_id" uuid NOT NULL,
 	"position" integer NOT NULL,
-	CONSTRAINT "backup_exercises_template_exercise_id_backup_exercise_id_pk" PRIMARY KEY("template_exercise_id","backup_exercise_id")
+	CONSTRAINT "backup_exercises_collection_id_backup_exercise_id_pk" PRIMARY KEY("collection_id","backup_exercise_id")
 );
 --> statement-breakpoint
 CREATE TABLE "fitness_plans" (
@@ -53,7 +67,8 @@ CREATE TABLE "prescribed_exercises" (
 	"workout_id" uuid NOT NULL,
 	"template_exercise_id" uuid NOT NULL,
 	"position" integer NOT NULL,
-	"note" text
+	"note" text,
+	"backup_collection_id" uuid
 );
 --> statement-breakpoint
 CREATE TABLE "prescribed_sets" (
@@ -79,6 +94,11 @@ CREATE TABLE "template_exercises" (
 	"movement_pattern" "movement_pattern" NOT NULL,
 	"equipment" "equipment",
 	"attachment" text,
+	"grip_width" "grip_width",
+	"grip_orientation" "grip_orientation",
+	"body_position" "body_position",
+	"laterality" "laterality",
+	"range_of_motion" "range_of_motion",
 	"note" text,
 	"variant_of" uuid,
 	"archived_at" timestamp,
@@ -102,7 +122,8 @@ CREATE TABLE "workouts" (
 	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "backup_exercises" ADD CONSTRAINT "backup_exercises_template_exercise_id_template_exercises_id_fk" FOREIGN KEY ("template_exercise_id") REFERENCES "public"."template_exercises"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "backup_collections" ADD CONSTRAINT "backup_collections_template_exercise_id_template_exercises_id_fk" FOREIGN KEY ("template_exercise_id") REFERENCES "public"."template_exercises"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "backup_exercises" ADD CONSTRAINT "backup_exercises_collection_id_backup_collections_id_fk" FOREIGN KEY ("collection_id") REFERENCES "public"."backup_collections"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "backup_exercises" ADD CONSTRAINT "backup_exercises_backup_exercise_id_template_exercises_id_fk" FOREIGN KEY ("backup_exercise_id") REFERENCES "public"."template_exercises"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "fitness_plans" ADD CONSTRAINT "fitness_plans_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "logged_exercises" ADD CONSTRAINT "logged_exercises_logged_workout_id_logged_workouts_id_fk" FOREIGN KEY ("logged_workout_id") REFERENCES "public"."logged_workouts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -114,8 +135,12 @@ ALTER TABLE "plan_workouts" ADD CONSTRAINT "plan_workouts_plan_id_fitness_plans_
 ALTER TABLE "plan_workouts" ADD CONSTRAINT "plan_workouts_workout_id_workouts_id_fk" FOREIGN KEY ("workout_id") REFERENCES "public"."workouts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "prescribed_exercises" ADD CONSTRAINT "prescribed_exercises_workout_id_workouts_id_fk" FOREIGN KEY ("workout_id") REFERENCES "public"."workouts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "prescribed_exercises" ADD CONSTRAINT "prescribed_exercises_template_exercise_id_template_exercises_id_fk" FOREIGN KEY ("template_exercise_id") REFERENCES "public"."template_exercises"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "prescribed_exercises" ADD CONSTRAINT "prescribed_exercises_backup_collection_fk" FOREIGN KEY ("template_exercise_id","backup_collection_id") REFERENCES "public"."backup_collections"("template_exercise_id","id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "prescribed_sets" ADD CONSTRAINT "prescribed_sets_prescribed_exercise_id_prescribed_exercises_id_fk" FOREIGN KEY ("prescribed_exercise_id") REFERENCES "public"."prescribed_exercises"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "template_exercise_muscles" ADD CONSTRAINT "template_exercise_muscles_template_exercise_id_template_exercises_id_fk" FOREIGN KEY ("template_exercise_id") REFERENCES "public"."template_exercises"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "template_exercises" ADD CONSTRAINT "template_exercises_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "template_exercises" ADD CONSTRAINT "template_exercises_variant_of_template_exercises_id_fk" FOREIGN KEY ("variant_of") REFERENCES "public"."template_exercises"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "workouts" ADD CONSTRAINT "workouts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "workouts" ADD CONSTRAINT "workouts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE UNIQUE INDEX "backup_collections_name_uq" ON "backup_collections" USING btree ("template_exercise_id",lower(btrim("name")));--> statement-breakpoint
+CREATE UNIQUE INDEX "backup_collections_one_default_uq" ON "backup_collections" USING btree ("template_exercise_id") WHERE "backup_collections"."name" is null;--> statement-breakpoint
+CREATE UNIQUE INDEX "template_exercises_user_name_uq" ON "template_exercises" USING btree ("user_id",lower(btrim("name"))) WHERE "template_exercises"."archived_at" is null;

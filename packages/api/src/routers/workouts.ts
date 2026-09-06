@@ -18,6 +18,12 @@ const setInput = z.object({
 const exerciseInput = z.object({
   templateExerciseId: z.string().uuid(),
   note: z.string().nullish(),
+  // ADR 0011: which of that Template's Backup Collections this slot offers.
+  // Null/omitted = the Template's default collection. The DB's composite FK
+  // rejects a collection belonging to a different Template, so a stale id
+  // surviving a template swap in the Plan Builder fails loudly instead of
+  // silently pointing the slot at another exercise's backups.
+  backupCollectionId: z.string().uuid().nullish(),
   sets: z.array(setInput),
 });
 
@@ -131,6 +137,7 @@ export const workoutsRouter = router({
                 templateExerciseId: exercise.templateExerciseId,
                 position,
                 note: exercise.note ?? null,
+                backupCollectionId: exercise.backupCollectionId ?? null,
               })
               .returning(),
           );

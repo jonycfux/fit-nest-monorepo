@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { and, eq, inArray, isNull } from "drizzle-orm";
 import { z } from "zod";
 import {
+  backupCollections,
   backupExercises,
   equipment,
   movementPattern,
@@ -11,7 +12,15 @@ import {
   templateExercises,
 } from "../db/schema.js";
 import { protectedProcedure, router } from "../trpc.js";
-import { assertOwnedExercises, firstOrThrow, type Tx } from "./_shared.js";
+import {
+  assertOwnedExercises,
+  defaultCollectionId,
+  firstOrThrow,
+  rethrowAsConflict,
+  type Tx,
+} from "./_shared.js";
+
+const NAME_TAKEN = "You already have an exercise with that name.";
 
 // Inputs are hand-written in the root zod (not derived via drizzle-zod): the
 // installed drizzle-zod brands its schemas against a different zod minor, so
@@ -54,25 +63,36 @@ async function replaceMuscles(
     .values(muscles.map((m) => ({ ...m, templateExerciseId })));
 }
 
-// Replace a Template Exercise's ordered backup list in place.
+// Replace one collection's ordered backup list in place.
+export async function replaceCollectionBackups(
+  tx: Tx,
+  userId: string,
+  collectionId: string,
+  backupExerciseIds: string[],
+) {
+  await tx.delete(backupExercises).where(eq(backupExercises.collectionId, collectionId));
+  if (backupExerciseIds.length === 0) return;
+  await assertOwnedExercises(tx, userId, backupExerciseIds);
+  await tx.insert(backupExercises).values(
+    backupExerciseIds.map((backupExerciseId, position) => ({
+      collectionId,
+      backupExerciseId,
+      position,
+    })),
+  );
+}
+
+// Replace a Template Exercise's *default* collection (ADR 0011). This is the
+// collection-unaware path every existing caller uses; naming collections is
+// opt-in through the backupCollections router.
 async function replaceBackups(
   tx: Tx,
   userId: string,
   templateExerciseId: string,
   backupExerciseIds: string[],
 ) {
-  await tx
-    .delete(backupExercises)
-    .where(eq(backupExercises.templateExerciseId, templateExerciseId));
-  if (backupExerciseIds.length === 0) return;
-  await assertOwnedExercises(tx, userId, backupExerciseIds);
-  await tx.insert(backupExercises).values(
-    backupExerciseIds.map((backupExerciseId, position) => ({
-      templateExerciseId,
-      backupExerciseId,
-      position,
-    })),
-  );
+  const collectionId = await defaultCollectionId(tx, templateExerciseId);
+  await replaceCollectionBackups(tx, userId, collectionId, backupExerciseIds);
 }
 
 export const templateExercisesRouter = router({
@@ -129,16 +149,44 @@ export const templateExercisesRouter = router({
       .from(templateExerciseMuscles)
       .where(eq(templateExerciseMuscles.templateExerciseId, exercise.id));
 
-    const backups = await ctx.db
-      .select({
-        backupExerciseId: backupExercises.backupExerciseId,
-        position: backupExercises.position,
-      })
-      .from(backupExercises)
-      .where(eq(backupExercises.templateExerciseId, exercise.id))
-      .orderBy(backupExercises.position);
+    // Collections in display order, each with its ordered members. The same
+    // backup may legitimately appear in more than one collection (ADR 0011).
+    const collectionRows = await ctx.db
+      .select()
+      .from(backupCollections)
+      .where(eq(backupCollections.templateExerciseId, exercise.id))
+      .orderBy(backupCollections.position);
 
-    return { ...exercise, muscles, backups };
+    const memberRows = collectionRows.length
+      ? await ctx.db
+          .select({
+            collectionId: backupExercises.collectionId,
+            backupExerciseId: backupExercises.backupExerciseId,
+            position: backupExercises.position,
+          })
+          .from(backupExercises)
+          .where(
+            inArray(
+              backupExercises.collectionId,
+              collectionRows.map((c) => c.id),
+            ),
+          )
+          .orderBy(backupExercises.position)
+      : [];
+
+    const collections = collectionRows.map((collection) => ({
+      ...collection,
+      backups: memberRows
+        .filter((m) => m.collectionId === collection.id)
+        .map(({ backupExerciseId, position }) => ({ backupExerciseId, position })),
+    }));
+
+    // `backups` is the default collection's list, kept as a top-level field so
+    // collection-unaware callers (the Exercise Detail panel, the Edit form) need
+    // no knowledge of collections until a user creates a second one.
+    const backups = collections.find((c) => c.name === null)?.backups ?? [];
+
+    return { ...exercise, muscles, collections, backups };
   }),
 
   create: protectedProcedure
@@ -155,7 +203,8 @@ export const templateExercisesRouter = router({
           await tx
             .insert(templateExercises)
             .values({ ...fields, userId: ctx.user.id })
-            .returning(),
+            .returning()
+            .catch((e) => rethrowAsConflict(e, NAME_TAKEN)),
         );
         await replaceMuscles(tx, exercise.id, muscles);
         if (backupExerciseIds) {
@@ -181,7 +230,8 @@ export const templateExercisesRouter = router({
           .update(templateExercises)
           .set(fields)
           .where(and(eq(templateExercises.id, id), eq(templateExercises.userId, ctx.user.id)))
-          .returning();
+          .returning()
+          .catch((e) => rethrowAsConflict(e, NAME_TAKEN));
         if (!exercise) throw new TRPCError({ code: "NOT_FOUND" });
         if (muscles) await replaceMuscles(tx, id, muscles);
         if (backupExerciseIds) {
@@ -231,7 +281,8 @@ export const templateExercisesRouter = router({
               attachment: source.attachment,
               variantOf: source.id,
             })
-            .returning(),
+            .returning()
+            .catch((e) => rethrowAsConflict(e, NAME_TAKEN)),
         );
 
         const srcMuscles = await tx
@@ -247,16 +298,39 @@ export const templateExercisesRouter = router({
             .values(srcMuscles.map((m) => ({ ...m, templateExerciseId: variant.id })));
         }
 
-        const srcBackups = await tx
-          .select({ backupExerciseId: backupExercises.backupExerciseId })
-          .from(backupExercises)
-          .where(eq(backupExercises.templateExerciseId, source.id))
-          .orderBy(backupExercises.position);
-        if (srcBackups.length > 0) {
+        // Backups are copied by value (ADR 0004), and now so is the grouping:
+        // the variant gets its own collections with the same names and members.
+        // Copying the names too is the point — a clone of Bench Press that keeps
+        // its backups but loses the "home gym"/"commercial gym" split would hand
+        // the user a flat list to re-organise by hand.
+        const srcCollections = await tx
+          .select()
+          .from(backupCollections)
+          .where(eq(backupCollections.templateExerciseId, source.id))
+          .orderBy(backupCollections.position);
+
+        for (const srcCollection of srcCollections) {
+          const members = await tx
+            .select({ backupExerciseId: backupExercises.backupExerciseId })
+            .from(backupExercises)
+            .where(eq(backupExercises.collectionId, srcCollection.id))
+            .orderBy(backupExercises.position);
+          if (members.length === 0) continue;
+
+          const copy = firstOrThrow(
+            await tx
+              .insert(backupCollections)
+              .values({
+                templateExerciseId: variant.id,
+                name: srcCollection.name,
+                position: srcCollection.position,
+              })
+              .returning({ id: backupCollections.id }),
+          );
           await tx.insert(backupExercises).values(
-            srcBackups.map((b, position) => ({
-              templateExerciseId: variant.id,
-              backupExerciseId: b.backupExerciseId,
+            members.map((m, position) => ({
+              collectionId: copy.id,
+              backupExerciseId: m.backupExerciseId,
               position,
             })),
           );

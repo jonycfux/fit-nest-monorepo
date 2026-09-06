@@ -18,5 +18,5 @@ This is the corollary of ADR 0001 (live reference, performed-only, no snapshot) 
 ## Consequences
 
 - History reflects **current** Template attribute values (consistent with "renames propagate", ADR 0001) — there is no historical view of a movement's past muscles/equipment.
-- Adding per-slot or per-session fidelity later (e.g. actual Attachment used, slot-specific Backups) is **additive** — a nullable override column on the lower table — so deferring costs nothing.
+- Adding per-slot or per-session fidelity later (e.g. actual Attachment used) is **additive** — a nullable override column on the lower table — so deferring costs nothing. Slot-specific Backups were taken up in [ADR 0011](0011-backup-collections-and-slot-selection.md), and landed as a *selection* rather than an override: the slot points at one of the Template's Backup Collections, so the backups still live only at the Template level and this rule holds unbroken.
 - Global, system-owned enums (muscle groups, equipment types) are **not** a violation of the per-user ownership rule (ADR 0002): they are fixed reference vocabularies, not user-authored data.
