@@ -1,3 +1,4 @@
+import { backupCollectionsRouter } from "./routers/backup-collections.js";
 import { dashboardRouter } from "./routers/dashboard.js";
 import { healthRouter } from "./routers/health.js";
 import { loggedWorkoutsRouter } from "./routers/logged-workouts.js";
@@ -9,6 +10,7 @@ import { router } from "./trpc.js";
 export const appRouter = router({
   health: healthRouter,
   templateExercises: templateExercisesRouter,
+  backupCollections: backupCollectionsRouter,
   workouts: workoutsRouter,
   plans: plansRouter,
   loggedWorkouts: loggedWorkoutsRouter,

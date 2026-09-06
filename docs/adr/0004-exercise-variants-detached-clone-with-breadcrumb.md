@@ -12,11 +12,11 @@ We chose this middle path over the two obvious ends because the link is the one 
 
 ## What cloning copies
 
-Pre-filled from the source (all editable before save): movement pattern, target muscles, equipment, attachment, and a **value-copy** of the source's Backup Exercises (independent rows, not live-linked). **Not** copied: the source's Note (starts blank) and the name (must be changed). `variantOf` is set to the immediate source.
+Pre-filled from the source (all editable before save): movement pattern, target muscles, equipment, attachment, and a **value-copy** of the source's Backup Exercises, grouped into copies of the source's Backup Collections (independent rows, not live-linked — see [ADR 0011](0011-backup-collections-and-slot-selection.md)). **Not** copied: the source's Note (starts blank) and the name (must be changed). `variantOf` is set to the immediate source.
 
 ## Consequences
 
 - `variantOf` points at the **immediate** source, not the ultimate root — strictly more information (the root is derivable by walking up; intermediate lineage is not recoverable from a root-only link). Variants form a cycle-free forest (≤1 parent, many children).
 - **No cascade:** archiving or editing a source never touches its variants. `variantOf` points at the (soft-deleted) source row, which persists; only a true hard-delete of a source would `SET NULL`.
 - A future contributor will see a `variantOf` column that **no feature reads** — this is deliberate, not dead code. Do not remove it; it is non-backfillable breadcrumb data.
-- Distinct from **Backup Exercises** (ADR-less, in CONTEXT): variants are a *lineage* record; backups are a *substitution* record. They often overlap (a variant is a good backup) but are modeled separately. User-defined **backup collections** are a related future extension the backup model stays additive-compatible with.
+- Distinct from **Backup Exercises** (ADR-less, in CONTEXT): variants are a *lineage* record; backups are a *substitution* record. They often overlap (a variant is a good backup) but are modeled separately. User-defined **Backup Collections** were that future extension, now built in [ADR 0011](0011-backup-collections-and-slot-selection.md).

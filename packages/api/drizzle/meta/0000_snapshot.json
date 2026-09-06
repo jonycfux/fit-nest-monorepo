@@ -1,15 +1,121 @@
 {
-  "id": "8da21bc0-3eff-4bf1-be9a-f95ce9df0f73",
+  "id": "926c9c30-9894-4b87-9ea2-32f2525b3504",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.backup_collections": {
+      "name": "backup_collections",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "template_exercise_id": {
+          "name": "template_exercise_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "position": {
+          "name": "position",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "backup_collections_name_uq": {
+          "name": "backup_collections_name_uq",
+          "columns": [
+            {
+              "expression": "template_exercise_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "lower(btrim(\"name\"))",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "backup_collections_one_default_uq": {
+          "name": "backup_collections_one_default_uq",
+          "columns": [
+            {
+              "expression": "template_exercise_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"backup_collections\".\"name\" is null",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "backup_collections_template_exercise_id_template_exercises_id_fk": {
+          "name": "backup_collections_template_exercise_id_template_exercises_id_fk",
+          "tableFrom": "backup_collections",
+          "tableTo": "template_exercises",
+          "columnsFrom": [
+            "template_exercise_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "backup_collections_exercise_id_uq": {
+          "name": "backup_collections_exercise_id_uq",
+          "nullsNotDistinct": false,
+          "columns": [
+            "template_exercise_id",
+            "id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.backup_exercises": {
       "name": "backup_exercises",
       "schema": "",
       "columns": {
-        "template_exercise_id": {
-          "name": "template_exercise_id",
+        "collection_id": {
+          "name": "collection_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -29,12 +135,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "backup_exercises_template_exercise_id_template_exercises_id_fk": {
-          "name": "backup_exercises_template_exercise_id_template_exercises_id_fk",
+        "backup_exercises_collection_id_backup_collections_id_fk": {
+          "name": "backup_exercises_collection_id_backup_collections_id_fk",
           "tableFrom": "backup_exercises",
-          "tableTo": "template_exercises",
+          "tableTo": "backup_collections",
           "columnsFrom": [
-            "template_exercise_id"
+            "collection_id"
           ],
           "columnsTo": [
             "id"
@@ -57,10 +163,10 @@
         }
       },
       "compositePrimaryKeys": {
-        "backup_exercises_template_exercise_id_backup_exercise_id_pk": {
-          "name": "backup_exercises_template_exercise_id_backup_exercise_id_pk",
+        "backup_exercises_collection_id_backup_exercise_id_pk": {
+          "name": "backup_exercises_collection_id_backup_exercise_id_pk",
           "columns": [
-            "template_exercise_id",
+            "collection_id",
             "backup_exercise_id"
           ]
         }
@@ -431,6 +537,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "backup_collection_id": {
+          "name": "backup_collection_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -456,6 +568,21 @@
             "template_exercise_id"
           ],
           "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "prescribed_exercises_backup_collection_fk": {
+          "name": "prescribed_exercises_backup_collection_fk",
+          "tableFrom": "prescribed_exercises",
+          "tableTo": "backup_collections",
+          "columnsFrom": [
+            "template_exercise_id",
+            "backup_collection_id"
+          ],
+          "columnsTo": [
+            "template_exercise_id",
             "id"
           ],
           "onDelete": "no action",
@@ -630,6 +757,41 @@
           "primaryKey": false,
           "notNull": false
         },
+        "grip_width": {
+          "name": "grip_width",
+          "type": "grip_width",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grip_orientation": {
+          "name": "grip_orientation",
+          "type": "grip_orientation",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "body_position": {
+          "name": "body_position",
+          "type": "body_position",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "laterality": {
+          "name": "laterality",
+          "type": "laterality",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "range_of_motion": {
+          "name": "range_of_motion",
+          "type": "range_of_motion",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
         "note": {
           "name": "note",
           "type": "text",
@@ -656,7 +818,30 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "template_exercises_user_name_uq": {
+          "name": "template_exercises_user_name_uq",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "lower(btrim(\"name\"))",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"template_exercises\".\"archived_at\" is null",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "template_exercises_user_id_users_id_fk": {
           "name": "template_exercises_user_id_users_id_fk",
@@ -806,6 +991,20 @@
     }
   },
   "enums": {
+    "public.body_position": {
+      "name": "body_position",
+      "schema": "public",
+      "values": [
+        "standing",
+        "seated",
+        "lying",
+        "incline",
+        "decline",
+        "kneeling",
+        "bent-over",
+        "hanging"
+      ]
+    },
     "public.equipment": {
       "name": "equipment",
       "schema": "public",
@@ -821,6 +1020,34 @@
         "medicine-ball",
         "exercise-ball",
         "ez-bar"
+      ]
+    },
+    "public.grip_orientation": {
+      "name": "grip_orientation",
+      "schema": "public",
+      "values": [
+        "pronated",
+        "supinated",
+        "neutral",
+        "mixed"
+      ]
+    },
+    "public.grip_width": {
+      "name": "grip_width",
+      "schema": "public",
+      "values": [
+        "close",
+        "shoulder",
+        "wide"
+      ]
+    },
+    "public.laterality": {
+      "name": "laterality",
+      "schema": "public",
+      "values": [
+        "bilateral",
+        "unilateral",
+        "alternating"
       ]
     },
     "public.movement_pattern": {
@@ -860,6 +1087,16 @@
       "values": [
         "primary",
         "secondary"
+      ]
+    },
+    "public.range_of_motion": {
+      "name": "range_of_motion",
+      "schema": "public",
+      "values": [
+        "full",
+        "partial",
+        "deficit",
+        "pin"
       ]
     }
   },

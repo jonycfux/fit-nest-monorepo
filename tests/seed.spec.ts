@@ -1,10 +1,7 @@
 import { expect, test } from "@playwright/test";
+import { SEED_BACKUP_LINKS } from "../packages/api/src/db/seed-data/backup-links.js";
 import { SEED_EXERCISES } from "../packages/api/src/db/seed-data/exercises.js";
-import {
-  SEED_BACKUP_LINKS,
-  SEED_PLAN,
-  SEED_WORKOUTS,
-} from "../packages/api/src/db/seed-data/plan.js";
+import { SEED_PLAN, SEED_WORKOUTS } from "../packages/api/src/db/seed-data/plan.js";
 import type { SeedExercise } from "../packages/api/src/db/seed-data/types.js";
 
 // Verifies data produced by packages/api/src/db/seed.ts renders correctly in
@@ -31,14 +28,21 @@ const MUSCLE_GROUPS = [
   "core",
 ];
 
-// The seeded library is large, so only assert on the exercises the seeded plan's
-// workouts (and backup links) actually reference.
-const EXERCISE_NAMES = [
-  ...new Set([
-    ...SEED_WORKOUTS.flatMap((w) => w.prescriptions.map((p) => p.exercise)),
-    ...SEED_BACKUP_LINKS.flatMap((l) => [l.exercise, l.backup]),
-  ]),
+// Every seeded exercise now carries backups (they are derived — see
+// seed-data/backup-links.ts), so backup links no longer narrow anything: they
+// name the whole library. Assert instead on the exercises the seeded plan's
+// workouts reference, plus the backups of a small sample taken from them.
+const PLAN_EXERCISES = [
+  ...new Set(SEED_WORKOUTS.flatMap((w) => w.prescriptions.map((p) => p.exercise))),
 ];
+
+function backupsFor(exercise: string): string[] {
+  return SEED_BACKUP_LINKS.filter((l) => l.exercise === exercise).map((l) => l.backup);
+}
+
+const BACKUP_SAMPLE = PLAN_EXERCISES.slice(0, 3);
+
+const EXERCISE_NAMES = [...new Set([...PLAN_EXERCISES, ...BACKUP_SAMPLE.flatMap(backupsFor)])];
 
 const PLAN_META = `${SEED_PLAN.durationWeeks} weeks · ${SEED_WORKOUTS.length} workouts`;
 
@@ -125,16 +129,24 @@ test.describe("Exercise Library (/library)", () => {
 });
 
 test.describe("Exercise detail (/library/$exerciseId)", () => {
-  for (const link of SEED_BACKUP_LINKS) {
-    test(`shows backup exercises seeded for ${link.exercise}`, async ({ page }) => {
+  for (const exercise of BACKUP_SAMPLE) {
+    test(`shows backup exercises seeded for ${exercise}`, async ({ page }) => {
       await page.goto("/library");
-      await page.getByRole("link", { name: cardLocatorName(link.exercise) }).click();
+      await page.getByRole("link", { name: cardLocatorName(exercise) }).click();
 
-      await expect(page.getByRole("heading", { name: link.exercise })).toBeVisible();
+      await expect(page.getByRole("heading", { name: exercise })).toBeVisible();
 
-      const backupCount = SEED_BACKUP_LINKS.filter((l) => l.exercise === link.exercise).length;
-      await expect(page.getByText(`${backupCount} backups`)).toBeVisible();
-      await expect(page.getByText(link.backup)).toBeVisible();
+      const backups = backupsFor(exercise);
+      expect(backups.length).toBeGreaterThanOrEqual(2);
+      await expect(page.getByText(`${backups.length} backups`)).toBeVisible();
+      for (const backup of backups) {
+        await expect(page.getByText(backup, { exact: true }).first()).toBeVisible();
+      }
     });
   }
+});
+
+test("every seeded exercise has at least two backups", () => {
+  const withoutEnough = SEED_EXERCISES.filter((e) => backupsFor(e.name).length < 2);
+  expect(withoutEnough.map((e) => e.name)).toEqual([]);
 });
