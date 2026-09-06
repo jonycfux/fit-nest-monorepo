@@ -10,7 +10,12 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./tailwind-preset": "./tailwind-preset.cjs"
+    "./tailwind-preset": "./tailwind-preset.cjs",
+    "./execution-attributes": {
+      "types": "./dist/constants/execution-attributes.d.ts",
+      "import": "./dist/constants/execution-attributes.js",
+      "default": "./dist/constants/execution-attributes.js"
+    }
   },
   "scripts": {
     "build": "tsc --project tsconfig.json",

@@ -1,4 +1,13 @@
 import {
+  BODY_POSITIONS,
+  GRIP_ORIENTATIONS,
+  GRIP_WIDTHS,
+  LATERALITIES,
+  MOVEMENT_PATTERNS,
+  MUSCLE_GROUPS,
+  RANGES_OF_MOTION,
+} from "@fitnest/shared/execution-attributes";
+import {
   type AnyPgColumn,
   integer,
   numeric,
@@ -11,46 +20,15 @@ import {
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
-// TODO: handle variant parameters
-// - Grip
-// - Stance
-// - ROM
-// - Tempo
-// - Unilateral vs. Bilateral
-// - Seated vs. Standing vs. Lying
-// - etc.
-// TODO: handle name change (aliasing) conditions based on variant parameters (e.g., "Barbell Bench Press" → "Incline Barbell Bench Press" if the variant is an incline bench).
-
 // ---------------------------------------------------------------------------
 // Global, system-owned enums.
 // These are fixed reference vocabularies (universal anatomy / equipment), NOT
 // per-user data — so a shared enum here does not violate the per-user rule.
 // See docs/adr/0002 and docs/adr/0003.
 // ---------------------------------------------------------------------------
-export const movementPattern = pgEnum("movement_pattern", [
-  "push",
-  "pull",
-  "squat",
-  "hinge",
-  "lunge",
-  "carry",
-  "core",
-]);
+export const movementPattern = pgEnum("movement_pattern", MOVEMENT_PATTERNS);
 
-export const muscleGroup = pgEnum("muscle_group", [
-  "chest",
-  "back",
-  "quads",
-  "hamstrings",
-  "glutes",
-  "delts",
-  "biceps",
-  "triceps",
-  "calves",
-  "core",
-  "forearms",
-  "traps",
-]);
+export const muscleGroup = pgEnum("muscle_group", MUSCLE_GROUPS);
 
 export const muscleRole = pgEnum("muscle_role", ["primary", "secondary"]);
 
@@ -67,6 +45,18 @@ export const equipment = pgEnum("equipment", [
   "exercise-ball",
   "ez-bar",
 ]);
+
+// Execution Attributes (ADR 0010): how the movement is executed. Intrinsic in the
+// same sense `equipment` is — a different execution is a different Template
+// Exercise — so they never diverge when prescribed or logged. Values come from
+// `@fitnest/shared` so the apps' filter dropdowns and these enums cannot drift.
+// Tempo is deliberately absent: it is a per-set prescription, so if it is ever
+// wanted it belongs on `prescribedSets`, not here.
+export const gripWidth = pgEnum("grip_width", GRIP_WIDTHS);
+export const gripOrientation = pgEnum("grip_orientation", GRIP_ORIENTATIONS);
+export const bodyPosition = pgEnum("body_position", BODY_POSITIONS);
+export const laterality = pgEnum("laterality", LATERALITIES);
+export const rangeOfMotion = pgEnum("range_of_motion", RANGES_OF_MOTION);
 
 // ---------------------------------------------------------------------------
 // Identity
@@ -100,6 +90,15 @@ export const templateExercises = pgTable("template_exercises", {
   movementPattern: movementPattern("movement_pattern").notNull(),
   equipment: equipment("equipment"), // optional
   attachment: text("attachment"), // optional freeform modifier (rope, V-handle…)
+  // Execution Attributes (ADR 0010). Every axis is optional, and null means the
+  // axis has no value for this movement (a Squat has no grip width) — never
+  // "unfilled". `bodyPosition`/`laterality` are therefore populated for the whole
+  // seeded library, not just the exercises that name them.
+  gripWidth: gripWidth("grip_width"),
+  gripOrientation: gripOrientation("grip_orientation"),
+  bodyPosition: bodyPosition("body_position"),
+  laterality: laterality("laterality"),
+  rangeOfMotion: rangeOfMotion("range_of_motion"),
   note: text("note"), // optional Template-level cue
   // ADR 0004: immutable breadcrumb to the immediate clone source. No behavior;
   // set-null if the source is ever hard-deleted.
