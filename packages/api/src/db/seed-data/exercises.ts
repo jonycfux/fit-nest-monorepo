@@ -8,12 +8,16 @@ import type { SeedExercise } from "./types.js";
 export const SEED_EXERCISES: SeedExercise[] = [
   {
     name: "Ab Crunch",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "machine",
     muscles: [{ muscleGroup: "core", role: "primary" }],
   },
   {
     name: "Ab Roller",
+    bodyPosition: "kneeling",
+    laterality: "bilateral",
     movementPattern: "core",
     muscles: [
       { muscleGroup: "core", role: "primary" },
@@ -22,6 +26,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Ab Rollout",
+    bodyPosition: "kneeling",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "barbell",
     muscles: [
@@ -32,6 +38,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Arnold Press",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "kettlebell",
     muscles: [
@@ -41,6 +49,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Bench Dips",
+    bodyPosition: "hanging",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "bodyweight",
     muscles: [
@@ -51,6 +61,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Bench Press",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "barbell",
     muscles: [
@@ -61,6 +73,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Bent Over Row",
+    bodyPosition: "bent-over",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -71,6 +85,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Bent-Arm Pullover",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -82,6 +98,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Bicep Curl",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "dumbbell",
     muscles: [
@@ -91,12 +109,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Body Tricep Press",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "bodyweight",
     muscles: [{ muscleGroup: "triceps", role: "primary" }],
   },
   {
     name: "Butt Lift (Bridge)",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "bodyweight",
     muscles: [
@@ -106,18 +128,24 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Butterfly",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "machine",
     muscles: [{ muscleGroup: "chest", role: "primary" }],
   },
   {
     name: "Calf Press",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "machine",
     muscles: [{ muscleGroup: "calves", role: "primary" }],
   },
   {
     name: "Chest Pass",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "medicine-ball",
     muscles: [
@@ -128,6 +156,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Chest Press",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "cable",
     muscles: [
@@ -138,6 +168,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Clean",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -153,6 +185,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Concentration Curls",
+    bodyPosition: "seated",
+    laterality: "unilateral",
     movementPattern: "pull",
     equipment: "dumbbell",
     muscles: [
@@ -162,6 +196,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Crossover",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "cable",
     muscles: [
@@ -171,12 +207,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Crunch",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "cable",
     muscles: [{ muscleGroup: "core", role: "primary" }],
   },
   {
     name: "Curl",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -186,12 +226,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Dead Bug",
+    bodyPosition: "lying",
+    laterality: "alternating",
     movementPattern: "core",
     equipment: "bodyweight",
     muscles: [{ muscleGroup: "core", role: "primary" }],
   },
   {
     name: "Dead Clean",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "kettlebell",
     muscles: [
@@ -205,6 +249,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Deadlift",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "hinge",
     equipment: "barbell",
     muscles: [
@@ -219,6 +265,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Deadlifts",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "hinge",
     equipment: "cable",
     muscles: [
@@ -231,12 +279,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Decline Crunch",
+    bodyPosition: "decline",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "bodyweight",
     muscles: [{ muscleGroup: "core", role: "primary" }],
   },
   {
     name: "Dip",
+    bodyPosition: "hanging",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "machine",
     muscles: [
@@ -247,11 +299,15 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Donkey Calf Raises",
+    bodyPosition: "bent-over",
+    laterality: "bilateral",
     movementPattern: "push",
     muscles: [{ muscleGroup: "calves", role: "primary" }],
   },
   {
     name: "Double Jerk",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "kettlebell",
     muscles: [
@@ -263,6 +319,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Double Snatch",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "kettlebell",
     muscles: [
@@ -274,6 +332,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Face Pull",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "cable",
     muscles: [
@@ -283,6 +343,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Farmer's Walk",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "carry",
     muscles: [
       { muscleGroup: "forearms", role: "primary" },
@@ -296,6 +358,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Flyes",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "dumbbell",
     muscles: [
@@ -307,12 +371,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Front Raise",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "dumbbell",
     muscles: [{ muscleGroup: "delts", role: "primary" }],
   },
   {
     name: "Front Raise And Pullover",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -324,6 +392,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Full Twist",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "medicine-ball",
     muscles: [
@@ -333,6 +403,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Glute Ham Raise",
+    bodyPosition: "kneeling",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "machine",
     muscles: [
@@ -343,6 +415,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Glute Kickback",
+    bodyPosition: "kneeling",
+    laterality: "unilateral",
     movementPattern: "push",
     equipment: "bodyweight",
     muscles: [
@@ -352,6 +426,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Goblet Squat",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "squat",
     equipment: "kettlebell",
     muscles: [
@@ -364,6 +440,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Good Morning",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "hinge",
     equipment: "barbell",
     muscles: [
@@ -375,6 +453,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Hack Squat",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "squat",
     equipment: "barbell",
     muscles: [
@@ -387,18 +467,26 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Hammer Curls",
+    bodyPosition: "standing",
+    laterality: "bilateral",
+    gripOrientation: "neutral",
     movementPattern: "pull",
     equipment: "dumbbell",
     muscles: [{ muscleGroup: "biceps", role: "primary" }],
   },
   {
     name: "Hammer Curls - Rope Attachment",
+    bodyPosition: "standing",
+    laterality: "bilateral",
+    gripOrientation: "neutral",
     movementPattern: "pull",
     equipment: "cable",
     muscles: [{ muscleGroup: "biceps", role: "primary" }],
   },
   {
     name: "Hang Clean",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -414,6 +502,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Hang Power Clean",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "machine",
     muscles: [
@@ -427,6 +517,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Hang Snatch",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -443,36 +535,48 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Hanging Leg Raise",
+    bodyPosition: "hanging",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "bodyweight",
     muscles: [{ muscleGroup: "core", role: "primary" }],
   },
   {
     name: "Hanging Pike",
+    bodyPosition: "hanging",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "bodyweight",
     muscles: [{ muscleGroup: "core", role: "primary" }],
   },
   {
     name: "High Curls",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "cable",
     muscles: [{ muscleGroup: "biceps", role: "primary" }],
   },
   {
     name: "Hip Adduction",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "cable",
     muscles: [{ muscleGroup: "quads", role: "primary" }],
   },
   {
     name: "Hip Adductions",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "band",
     muscles: [{ muscleGroup: "glutes", role: "primary" }],
   },
   {
     name: "Hip Thrust",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "hinge",
     equipment: "barbell",
     muscles: [
@@ -483,6 +587,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Hyperextensions (Back Extensions)",
+    bodyPosition: "bent-over",
+    laterality: "bilateral",
     movementPattern: "hinge",
     muscles: [
       { muscleGroup: "back", role: "primary" },
@@ -492,6 +598,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Incline Row",
+    bodyPosition: "incline",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "dumbbell",
     muscles: [
@@ -503,12 +611,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Inverted Row",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "bodyweight",
     muscles: [{ muscleGroup: "back", role: "primary" }],
   },
   {
     name: "Iso Row",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "machine",
     muscles: [
@@ -518,6 +630,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Lat Pulldown",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "cable",
     muscles: [
@@ -528,6 +642,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Leg Curl",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "exercise-ball",
     muscles: [
@@ -538,12 +654,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Leg Extensions",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "machine",
     muscles: [{ muscleGroup: "quads", role: "primary" }],
   },
   {
     name: "Leg Lift",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "bodyweight",
     muscles: [
@@ -553,6 +673,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Leg Press",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "machine",
     muscles: [
@@ -564,6 +686,9 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Leg-Over Floor Press",
+    bodyPosition: "lying",
+    laterality: "bilateral",
+    rangeOfMotion: "partial",
     movementPattern: "push",
     equipment: "kettlebell",
     muscles: [
@@ -574,6 +699,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Lunge",
+    bodyPosition: "standing",
+    laterality: "alternating",
     movementPattern: "lunge",
     equipment: "barbell",
     muscles: [
@@ -585,6 +712,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Lunges",
+    bodyPosition: "standing",
+    laterality: "alternating",
     movementPattern: "lunge",
     equipment: "dumbbell",
     muscles: [
@@ -596,18 +725,24 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Lying Leg Curls",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "machine",
     muscles: [{ muscleGroup: "hamstrings", role: "primary" }],
   },
   {
     name: "Lying Pronation",
+    bodyPosition: "lying",
+    laterality: "unilateral",
     movementPattern: "pull",
     equipment: "dumbbell",
     muscles: [{ muscleGroup: "forearms", role: "primary" }],
   },
   {
     name: "Lying T-Bar Row",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "machine",
     muscles: [
@@ -617,6 +752,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Lying Tricep Extension",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "dumbbell",
     muscles: [
@@ -627,12 +764,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Lying Triceps Extension",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "cable",
     muscles: [{ muscleGroup: "triceps", role: "primary" }],
   },
   {
     name: "Muscle Up",
+    bodyPosition: "hanging",
+    laterality: "bilateral",
     movementPattern: "pull",
     muscles: [
       { muscleGroup: "back", role: "primary" },
@@ -646,6 +787,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "One-Arm Long Bar Row",
+    bodyPosition: "bent-over",
+    laterality: "unilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -655,6 +798,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "One-Arm Row",
+    bodyPosition: "bent-over",
+    laterality: "unilateral",
     movementPattern: "pull",
     equipment: "kettlebell",
     muscles: [
@@ -664,6 +809,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "One-Arm Split Jerk",
+    bodyPosition: "standing",
+    laterality: "unilateral",
     movementPattern: "push",
     equipment: "kettlebell",
     muscles: [
@@ -676,6 +823,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "One-Arm Split Snatch",
+    bodyPosition: "standing",
+    laterality: "unilateral",
     movementPattern: "pull",
     equipment: "kettlebell",
     muscles: [
@@ -686,6 +835,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "One-Arm Swings",
+    bodyPosition: "standing",
+    laterality: "unilateral",
     movementPattern: "hinge",
     equipment: "kettlebell",
     muscles: [
@@ -698,6 +849,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "One-Legged Deadlift",
+    bodyPosition: "standing",
+    laterality: "unilateral",
     movementPattern: "hinge",
     equipment: "kettlebell",
     muscles: [
@@ -708,6 +861,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "One-Legged Kickback",
+    bodyPosition: "kneeling",
+    laterality: "unilateral",
     movementPattern: "push",
     equipment: "cable",
     muscles: [
@@ -717,6 +872,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Pallof Press",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "cable",
     muscles: [
@@ -728,6 +885,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Pallof Press With Rotation",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "cable",
     muscles: [
@@ -739,6 +898,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Physioball Hip Bridge",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "exercise-ball",
     muscles: [
@@ -748,6 +909,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Pistol Squat",
+    bodyPosition: "standing",
+    laterality: "unilateral",
     movementPattern: "squat",
     equipment: "kettlebell",
     muscles: [
@@ -760,12 +923,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Plank",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "bodyweight",
     muscles: [{ muscleGroup: "core", role: "primary" }],
   },
   {
     name: "Plyo Pushups",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "kettlebell",
     muscles: [
@@ -776,6 +943,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Power Clean",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -792,6 +961,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Power Jerk",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "barbell",
     muscles: [
@@ -806,6 +977,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Power Snatch",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -821,6 +994,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Preacher Curl",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -830,12 +1005,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Preacher Curls",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "machine",
     muscles: [{ muscleGroup: "biceps", role: "primary" }],
   },
   {
     name: "Press Sit-Up",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "barbell",
     muscles: [
@@ -847,6 +1026,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Pull Apart",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "band",
     muscles: [
@@ -857,6 +1038,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Pull Through",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "cable",
     muscles: [
@@ -867,12 +1050,17 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Pull-In",
+    bodyPosition: "seated",
+    laterality: "bilateral",
+    rangeOfMotion: "partial",
     movementPattern: "core",
     equipment: "exercise-ball",
     muscles: [{ muscleGroup: "core", role: "primary" }],
   },
   {
     name: "Pullups",
+    bodyPosition: "hanging",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "bodyweight",
     muscles: [
@@ -882,6 +1070,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Push-Ups (Feet Elevated)",
+    bodyPosition: "decline",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "exercise-ball",
     muscles: [
@@ -892,6 +1082,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Pushups",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "bodyweight",
     muscles: [
@@ -902,6 +1094,9 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Rack Pulls",
+    bodyPosition: "standing",
+    laterality: "bilateral",
+    rangeOfMotion: "pin",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -914,6 +1109,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Raise",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "dumbbell",
     muscles: [
@@ -923,12 +1120,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Rear Delt Fly",
+    bodyPosition: "bent-over",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "cable",
     muscles: [{ muscleGroup: "delts", role: "primary" }],
   },
   {
     name: "Rear Delt Row",
+    bodyPosition: "bent-over",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -939,12 +1140,17 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Reverse Crunch",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "bodyweight",
     muscles: [{ muscleGroup: "core", role: "primary" }],
   },
   {
     name: "Reverse Curl",
+    bodyPosition: "standing",
+    laterality: "bilateral",
+    gripOrientation: "pronated",
     movementPattern: "pull",
     equipment: "cable",
     muscles: [
@@ -954,12 +1160,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Reverse Flyes",
+    bodyPosition: "bent-over",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "dumbbell",
     muscles: [{ muscleGroup: "delts", role: "primary" }],
   },
   {
     name: "Reverse Hyperextension",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "hinge",
     equipment: "machine",
     muscles: [
@@ -970,6 +1180,9 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Reverse Preacher Curls",
+    bodyPosition: "seated",
+    laterality: "bilateral",
+    gripOrientation: "pronated",
     movementPattern: "pull",
     equipment: "ez-bar",
     muscles: [
@@ -979,6 +1192,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Ring Dips",
+    bodyPosition: "hanging",
+    laterality: "bilateral",
     movementPattern: "push",
     muscles: [
       { muscleGroup: "triceps", role: "primary" },
@@ -988,6 +1203,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Romanian Deadlift",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "hinge",
     equipment: "barbell",
     muscles: [
@@ -999,18 +1216,24 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Rope Crunch",
+    bodyPosition: "kneeling",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "cable",
     muscles: [{ muscleGroup: "core", role: "primary" }],
   },
   {
     name: "Rope Overhead Triceps Extension",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "cable",
     muscles: [{ muscleGroup: "triceps", role: "primary" }],
   },
   {
     name: "Rope Rear-Delt Rows",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "cable",
     muscles: [
@@ -1021,6 +1244,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Russian Twist",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "bodyweight",
     muscles: [
@@ -1030,24 +1255,32 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Russian Twists",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "cable",
     muscles: [{ muscleGroup: "core", role: "primary" }],
   },
   {
     name: "Seated Calf Raise",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "barbell",
     muscles: [{ muscleGroup: "calves", role: "primary" }],
   },
   {
     name: "Seated Hamstring Curl",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "band",
     muscles: [{ muscleGroup: "hamstrings", role: "primary" }],
   },
   {
     name: "Seated Lateral Raise",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "cable",
     muscles: [
@@ -1058,24 +1291,34 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Seated Leg Tucks",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "bodyweight",
     muscles: [{ muscleGroup: "core", role: "primary" }],
   },
   {
     name: "Seated Palm-Up Wrist Curl",
+    bodyPosition: "seated",
+    laterality: "bilateral",
+    gripOrientation: "supinated",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [{ muscleGroup: "forearms", role: "primary" }],
   },
   {
     name: "Seated Palms-Up Wrist Curl",
+    bodyPosition: "seated",
+    laterality: "bilateral",
+    gripOrientation: "supinated",
     movementPattern: "pull",
     equipment: "dumbbell",
     muscles: [{ muscleGroup: "forearms", role: "primary" }],
   },
   {
     name: "Seated Rows",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "cable",
     muscles: [
@@ -1086,6 +1329,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Shoulder Press",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "barbell",
     muscles: [
@@ -1096,6 +1341,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Shrug",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -1105,12 +1352,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Shrugs",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "cable",
     muscles: [{ muscleGroup: "traps", role: "primary" }],
   },
   {
     name: "Side Bend",
+    bodyPosition: "standing",
+    laterality: "unilateral",
     movementPattern: "core",
     equipment: "barbell",
     muscles: [
@@ -1120,6 +1371,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Side Split Squat",
+    bodyPosition: "standing",
+    laterality: "unilateral",
     movementPattern: "squat",
     equipment: "barbell",
     muscles: [
@@ -1131,6 +1384,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Single Leg Push-off",
+    bodyPosition: "standing",
+    laterality: "unilateral",
     movementPattern: "push",
     muscles: [
       { muscleGroup: "quads", role: "primary" },
@@ -1140,18 +1395,24 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Sit-Up",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "bodyweight",
     muscles: [{ muscleGroup: "core", role: "primary" }],
   },
   {
     name: "Skull Crusher",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "band",
     muscles: [{ muscleGroup: "triceps", role: "primary" }],
   },
   {
     name: "Skullcrusher",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "ez-bar",
     muscles: [
@@ -1161,6 +1422,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Smith Single-Leg Split Squat",
+    bodyPosition: "standing",
+    laterality: "unilateral",
     movementPattern: "squat",
     equipment: "machine",
     muscles: [
@@ -1172,6 +1435,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Snatch",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -1187,12 +1452,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Spider Curl",
+    bodyPosition: "incline",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "ez-bar",
     muscles: [{ muscleGroup: "biceps", role: "primary" }],
   },
   {
     name: "Split Clean",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -1208,6 +1477,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Split Jerk",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "barbell",
     muscles: [
@@ -1220,6 +1491,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Split Snatch",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -1236,6 +1509,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Split Squat",
+    bodyPosition: "standing",
+    laterality: "unilateral",
     movementPattern: "squat",
     equipment: "dumbbell",
     muscles: [
@@ -1246,6 +1521,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Squat",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "squat",
     equipment: "bodyweight",
     muscles: [
@@ -1258,6 +1535,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Standing Low-Pulley One-Arm Triceps Extension",
+    bodyPosition: "standing",
+    laterality: "unilateral",
     movementPattern: "push",
     equipment: "cable",
     muscles: [
@@ -1268,6 +1547,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Standing Overhead Triceps Extension",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "barbell",
     muscles: [
@@ -1277,12 +1558,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Standing Towel Triceps Extension",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "bodyweight",
     muscles: [{ muscleGroup: "triceps", role: "primary" }],
   },
   {
     name: "Standing Upright Row",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "dumbbell",
     muscles: [
@@ -1293,6 +1578,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Stiff-Legged Deadlift",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "hinge",
     equipment: "dumbbell",
     muscles: [
@@ -1303,12 +1590,17 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Straight-Arm Pulldown",
+    bodyPosition: "standing",
+    laterality: "bilateral",
+    gripOrientation: "pronated",
     movementPattern: "pull",
     equipment: "cable",
     muscles: [{ muscleGroup: "back", role: "primary" }],
   },
   {
     name: "Suspended Split Squat",
+    bodyPosition: "standing",
+    laterality: "unilateral",
     movementPattern: "squat",
     muscles: [
       { muscleGroup: "quads", role: "primary" },
@@ -1319,12 +1611,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Thigh Abductor",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "machine",
     muscles: [{ muscleGroup: "glutes", role: "primary" }],
   },
   {
     name: "Thruster",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "kettlebell",
     muscles: [
@@ -1335,24 +1631,32 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Tricep Kickback",
+    bodyPosition: "bent-over",
+    laterality: "unilateral",
     movementPattern: "push",
     equipment: "dumbbell",
     muscles: [{ muscleGroup: "triceps", role: "primary" }],
   },
   {
     name: "Triceps Extension",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "machine",
     muscles: [{ muscleGroup: "triceps", role: "primary" }],
   },
   {
     name: "Triceps Pushdown",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "push",
     equipment: "cable",
     muscles: [{ muscleGroup: "triceps", role: "primary" }],
   },
   {
     name: "Turkish Get-Up (Lunge style)",
+    bodyPosition: "lying",
+    laterality: "unilateral",
     movementPattern: "lunge",
     equipment: "kettlebell",
     muscles: [
@@ -1365,6 +1669,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Turkish Get-Up (Squat style)",
+    bodyPosition: "lying",
+    laterality: "unilateral",
     movementPattern: "squat",
     equipment: "kettlebell",
     muscles: [
@@ -1378,6 +1684,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Upright Row",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "barbell",
     muscles: [
@@ -1389,6 +1697,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Walking Lunge",
+    bodyPosition: "standing",
+    laterality: "alternating",
     movementPattern: "lunge",
     equipment: "bodyweight",
     muscles: [
@@ -1400,12 +1710,16 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Weighted Crunches",
+    bodyPosition: "lying",
+    laterality: "bilateral",
     movementPattern: "core",
     equipment: "medicine-ball",
     muscles: [{ muscleGroup: "core", role: "primary" }],
   },
   {
     name: "Weighted Hyperextension",
+    bodyPosition: "bent-over",
+    laterality: "bilateral",
     movementPattern: "hinge",
     equipment: "exercise-ball",
     muscles: [
@@ -1416,18 +1730,24 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Weighted Side Bend",
+    bodyPosition: "standing",
+    laterality: "unilateral",
     movementPattern: "core",
     equipment: "exercise-ball",
     muscles: [{ muscleGroup: "core", role: "primary" }],
   },
   {
     name: "Wrist Curl",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "cable",
     muscles: [{ muscleGroup: "forearms", role: "primary" }],
   },
   {
     name: "Wrist Roller",
+    bodyPosition: "standing",
+    laterality: "bilateral",
     movementPattern: "pull",
     muscles: [
       { muscleGroup: "forearms", role: "primary" },
@@ -1436,6 +1756,8 @@ export const SEED_EXERCISES: SeedExercise[] = [
   },
   {
     name: "Zottman Preacher Curl",
+    bodyPosition: "seated",
+    laterality: "bilateral",
     movementPattern: "pull",
     equipment: "dumbbell",
     muscles: [

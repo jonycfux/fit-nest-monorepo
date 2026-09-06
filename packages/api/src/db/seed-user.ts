@@ -50,6 +50,10 @@ async function seedExerciseLibrary(tx: Tx, userId: string): Promise<Map<string, 
         name: ex.name,
         movementPattern: ex.movementPattern,
         equipment: ex.equipment,
+        bodyPosition: ex.bodyPosition,
+        laterality: ex.laterality,
+        gripOrientation: ex.gripOrientation,
+        rangeOfMotion: ex.rangeOfMotion,
       })),
     )
     .returning({ id: templateExercises.id, name: templateExercises.name });

@@ -22,7 +22,17 @@ export type SeedExerciseMuscle = Pick<TemplateExerciseMuscleInsert, "muscleGroup
 /** A Template Exercise, minus the FK/generated columns the seeder fills in. */
 export type SeedExercise = Pick<
   TemplateExerciseInsert,
-  "name" | "movementPattern" | "equipment"
+  | "name"
+  | "movementPattern"
+  | "equipment"
+  // Execution Attributes (ADR 0010). `bodyPosition` and `laterality` are set on
+  // every seeded exercise — a filter over an all-null library is worthless, and
+  // every movement genuinely has both. The remaining axes appear only where the
+  // movement is actually distinctive on them.
+  | "bodyPosition"
+  | "laterality"
+  | "gripOrientation"
+  | "rangeOfMotion"
 > & {
   muscles: SeedExerciseMuscle[];
 };
